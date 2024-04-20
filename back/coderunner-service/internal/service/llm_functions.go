@@ -57,16 +57,12 @@ func LLMFormater(input string, example string) (*string, error) {
 	return ChatMessage(input, formaterPrompt+"\n Example:\n"+example)
 }
 
-func LLMTranslator(input string, languages []string) ([]*string, error) {
-	var output []*string
-	for _, language := range languages {
-		translated, err := ChatMessage(input, translatorPrompt+language)
-		if err != nil {
-			return nil, err
-		}
-		output = append(output, translated)
+func LLMTranslator(input string, language string) (*string, error) {
+	translated, err := ChatMessage(input, translatorPrompt+language)
+	if err != nil {
+		return nil, err
 	}
-	return output, nil
+	return translated, nil
 }
 
 func LLMGenerate(input string) (*string, error) {
