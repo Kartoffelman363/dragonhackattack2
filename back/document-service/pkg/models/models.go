@@ -8,39 +8,35 @@ import (
 
 // when changing file make sure to update across repo
 
-type Status struct {
-	StatusCode string `json:"statuscode" bson:"statuscode"`
-}
-
-type Variable struct {
+type InputVariable struct {
 	VarName string `json:"varname" bson:"varname"`
 	Type    string `json:"type" bson:"type"`
 	Value   string `json:"value" bson:"value"`
-	Example string `json:"example" bson:"example"`
 }
 
-type MetaData struct {
-	X int `json:"x" bson:"x"`
-	Y int `json:"y" bson:"y"`
+type OutputVariable struct {
+	VarName string `json:"varname" bson:"varname"`
+	Type    string `json:"type" bson:"type"`
+}
+
+type Block struct {
+	ID              primitive.ObjectID `json:"_id" bson:"_id"`
+	InputVariables  []InputVariable    `json:"input_variables" bson:"input_variables"`
+	OutputVariables []OutputVariable   `json:"output_variables" bson:"output_variables"`
+	Code            string             `json:"code" bson:"code"`
 }
 
 type Workflow struct {
-	ID              primitive.ObjectID `json:"_id" bson:"_id"`
-	Name            string             `json:"name" bson:"name"`
-	Metadata        MetaData           `json:"metadata" bson:"metadata"`
-	InputVariables  []Variable         `json:"input_variables" bson:"input_variables"`
-	OutputVariables []Variable         `json:"output_variables" bson:"output_variables"`
-	Code            string             `json:"code" bson:"code"`
-	Blocks          Workflows          `json:"blocks" bson:"blocks"`
+	ID             primitive.ObjectID `json:"_id" bson:"_id"`
+	Metadata       string             `json:"metadata" bson:"metadata"`
+	Blocks         []Block            `json:"blocks" bson:"blocks"`
+	InputVariables []InputVariable    `json:"input_variables" bson:"input_variables"`
 }
 
 type WorkflowCreate struct {
-	Name            string     `json:"name" bson:"name"`
-	Metadata        MetaData   `json:"metadata" bson:"metadata"`
-	InputVariables  []Variable `json:"input_variables" bson:"input_variables"`
-	OutputVariables []Variable `json:"output_variables" bson:"output_variables"`
-	Code            string     `json:"code" bson:"code"`
-	Blocks          Workflows  `json:"blocks" bson:"blocks"`
+	Metadata       string          `json:"metadata" bson:"metadata"`
+	Blocks         []Block         `json:"blocks" bson:"blocks"`
+	InputVariables []InputVariable `json:"input_variables" bson:"input_variables"`
 }
 
 type Document struct {
