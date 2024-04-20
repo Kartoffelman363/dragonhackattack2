@@ -7,7 +7,7 @@ type Status struct {
 }
 
 type DocumentDeletionRequest struct {
-	ID string `json:"id"`
+	ID string `json:"_id"`
 }
 
 type DocumentGetByIDRequest struct {
@@ -22,13 +22,28 @@ type WorkflowGetByIDRequest struct {
 	ID string `json:"id"`
 }
 
-// TODO: Expand to include workflow
-type Workflow struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+type Variable struct {
+	VarName string `json:"varname"`
+	Type    string `json:"type"`
+	Value   string `json:"value"`
+	Example string `json:"example"`
 }
 
-// TODO: Expand to include document
+type MetaData struct {
+	X int `json:"x"`
+	Y int `json:"y"`
+}
+
+type Workflow struct {
+	ID              string     `json:"id"`
+	Name            string     `json:"name"`
+	Metadata        MetaData   `json:"metadata"`
+	InputVariables  []Variable `json:"input_variables"`
+	OutputVariables []Variable `json:"output_variables"`
+	Code            string     `json:"code"`
+	Blocks          Workflows  `json:"blocks"`
+}
+
 type Document struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
