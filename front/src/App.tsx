@@ -1,16 +1,11 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
+import React, { ReactElement } from 'react';
 
-function App() {
-  return (
-    <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </Router>
-    </>
-  );
-}
+import Chatbot from './components/Chatbot/Chatbot';
+
+const App = (): ReactElement => {
+    return (
+        <Chatbot/>
+    );
+};
 
 export default App;
