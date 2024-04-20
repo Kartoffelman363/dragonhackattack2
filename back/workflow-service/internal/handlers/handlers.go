@@ -22,7 +22,7 @@ func GetAllWorkflows(c *gin.Context) {
 		respondWithError(c, 404, "No documents found")
 		return
 	}
-	c.JSON(200, res)
+	c.JSON(200, *res)
 }
 
 func GetWorkflowByID(c *gin.Context) {
@@ -36,7 +36,7 @@ func GetWorkflowByID(c *gin.Context) {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-	c.JSON(200, res)
+	c.JSON(200, *res)
 }
 
 func DeleteWorkflow(c *gin.Context) {
@@ -64,5 +64,24 @@ func CreateWorkflow(c *gin.Context) {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-	c.JSON(200, res)
+	c.JSON(200, *res)
+}
+
+func UpdateWorkflow(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+	var workflow models.WorkflowCreate
+	if err := c.BindJSON(&workflow); err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+	res, err := service.UpdateWorkflow(id, workflow)
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+	c.JSON(200, *res)
 }

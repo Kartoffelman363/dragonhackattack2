@@ -12,7 +12,8 @@ func SetupRouter() *gin.Engine {
 	r.GET("/workflows", handlers.GetAllWorkflows)
 	r.GET("/workflows/:id", handlers.GetWorkflowByID)
 	r.DELETE("/workflows/:id", handlers.DeleteWorkflow)
-	r.POST("/workflows/", handlers.CreateWorkflow)
+	r.POST("/workflows", handlers.CreateWorkflow)
+	r.POST("/workflows/:id", handlers.UpdateWorkflow)
 
 	return r
 }

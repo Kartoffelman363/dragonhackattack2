@@ -13,6 +13,7 @@ func SetupRouter() *gin.Engine {
 	r.GET("/documents/:id", handlers.GetDocumentByID)
 	r.DELETE("/documents/:id", handlers.DeleteDocument)
 	r.POST("/documents", handlers.CreateDocument)
+	r.POST("/documents/:id", handlers.UpdateDocument)
 
 	return r
 }

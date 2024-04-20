@@ -77,3 +77,30 @@ func CreateDocument(document models.DocumentCreate) (*models.Document, error) {
 
 	return &insertedDocument, nil
 }
+
+func UpdateDocument(id primitive.ObjectID, updateData models.DocumentCreate) (*models.Document, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	collection := mongodb.GetCollection("yourDatabase", "documents")
+
+	update := bson.M{
+		"$set": updateData,
+	}
+
+	updateResult, err := collection.UpdateByID(ctx, id, update)
+	if err != nil {
+		return nil, fmt.Errorf("could not update document: %v", err)
+	}
+
+	if updateResult.MatchedCount == 0 {
+		return nil, fmt.Errorf("no workflow found with ID %v", id)
+	}
+
+	var updatedDocument models.Document
+	if err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(&updatedDocument); err != nil {
+		return nil, fmt.Errorf("could not retrieve updated workflow: %v", err)
+	}
+
+	return &updatedDocument, nil
+}
