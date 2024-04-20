@@ -7,9 +7,12 @@ import (
 	"net/http"
 )
 
-func ApiRequests(url string, body []byte, requestMethod string, contentType string) ([]byte, error) {
+/*
+Service for sending custom api requests
+*/
+func ApiRequests(url string, body string, requestMethod string, contentType string) ([]byte, error) {
 	// Creates new request
-	request, err := http.NewRequest(requestMethod, url, bytes.NewBuffer(body))
+	request, err := http.NewRequest(requestMethod, url, bytes.NewBuffer([]byte(body)))
 	if err != nil {
 		return nil, fmt.Errorf("error creating request %v", err)
 	}
