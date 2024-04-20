@@ -169,6 +169,14 @@ const Chatbot = (): ReactElement => {
                 return;
             });
         });
+
+        fetch('http://api-service', {
+            method: 'POST',
+            body: JSON.stringify(resJson),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+        });
         console.log('JSON by Balenciaga:\n', jsonForBackend.current);
         console.log('JSON by H&M:\n', resJson);
     };
