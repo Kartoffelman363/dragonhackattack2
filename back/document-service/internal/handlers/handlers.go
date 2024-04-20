@@ -67,3 +67,22 @@ func CreateDocument(c *gin.Context) {
 	}
 	c.JSON(200, *res)
 }
+
+func UpdateDocument(c *gin.Context) {
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+	var document models.DocumentCreate
+	if err := c.BindJSON(&document); err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+	res, err := service.UpdateDocument(id, document)
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+	c.JSON(200, *res)
+}
