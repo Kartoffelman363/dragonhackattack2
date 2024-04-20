@@ -25,6 +25,7 @@ export enum ShapeTypesEnum {
     MESSAGE = 'stencil.Message',
     FLOWCHART_START = 'stencil.FlowchartStart',
     FLOWCHART_END = 'stencil.FlowchartEnd',
+    ABC = 'stencil.Abc'
 }
 
 const SHAPE_SIZE = 48;
@@ -151,9 +152,310 @@ const Message = dia.Element.define(ShapeTypesEnum.MESSAGE, {
     }]
 });
 
+const Message2 = dia.Element.define(ShapeTypesEnum.MESSAGE, {
+    name: 'Message2',
+    size: { width: SHAPE_SIZE, height: SHAPE_SIZE },
+    attrs: {
+        body: {
+            fill: LIGHT_COLOR,
+            stroke: '#E8E8E8',
+            cx: 'calc(0.5 * w)',
+            cy: 'calc(0.5 * h)',
+            r: 'calc(0.5 * w)',
+        },
+        icon: {
+            width: 20,
+            height: 20,
+            x: 'calc(0.5 * w - 10)',
+            y: 'calc(0.5 * h - 10)',
+            xlinkHref: MESSAGE_ICON
+        },
+        label: {
+            text: 'Component',
+            x: `calc(w + ${PADDING_L})`,
+            y: 'calc(0.5 * h)',
+            textAnchor: 'start',
+            textVerticalAnchor: 'middle',
+            fill: '#242424',
+            fontFamily: FONT_FAMILY,
+            fontSize: 13
+        }
+    }
+} as mvc.ObjectHash, {
+    markup: [{
+        tagName: 'circle',
+        selector: 'body'
+    }, {
+        tagName: 'image',
+        selector: 'icon'
+    }, {
+        tagName: 'text',
+        selector: 'label'
+    }]
+});
+
+const Message3 = dia.Element.define(ShapeTypesEnum.MESSAGE, {
+    name: 'Message3',
+    size: { width: SHAPE_SIZE, height: SHAPE_SIZE },
+    attrs: {
+        body: {
+            fill: LIGHT_COLOR,
+            stroke: '#E8E8E8',
+            cx: 'calc(0.5 * w)',
+            cy: 'calc(0.5 * h)',
+            r: 'calc(0.5 * w)',
+        },
+        icon: {
+            width: 20,
+            height: 20,
+            x: 'calc(0.5 * w - 10)',
+            y: 'calc(0.5 * h - 10)',
+            xlinkHref: MESSAGE_ICON
+        },
+        label: {
+            text: 'Component',
+            x: `calc(w + ${PADDING_L})`,
+            y: 'calc(0.5 * h)',
+            textAnchor: 'start',
+            textVerticalAnchor: 'middle',
+            fill: '#242424',
+            fontFamily: FONT_FAMILY,
+            fontSize: 13
+        }
+    }
+} as mvc.ObjectHash, {
+    markup: [{
+        tagName: 'circle',
+        selector: 'body'
+    }, {
+        tagName: 'image',
+        selector: 'icon'
+    }, {
+        tagName: 'text',
+        selector: 'label'
+    }]
+});
+
+const Message4 = dia.Element.define(ShapeTypesEnum.MESSAGE, {
+    name: 'Message4',
+    size: { width: SHAPE_SIZE, height: SHAPE_SIZE },
+    attrs: {
+        body: {
+            fill: LIGHT_COLOR,
+            stroke: '#E8E8E8',
+            cx: 'calc(0.5 * w)',
+            cy: 'calc(0.5 * h)',
+            r: 'calc(0.5 * w)',
+        },
+        icon: {
+            width: 20,
+            height: 20,
+            x: 'calc(0.5 * w - 10)',
+            y: 'calc(0.5 * h - 10)',
+            xlinkHref: MESSAGE_ICON
+        },
+        label: {
+            text: 'Component',
+            x: `calc(w + ${PADDING_L})`,
+            y: 'calc(0.5 * h)',
+            textAnchor: 'start',
+            textVerticalAnchor: 'middle',
+            fill: '#242424',
+            fontFamily: FONT_FAMILY,
+            fontSize: 13
+        }
+    }
+} as mvc.ObjectHash, {
+    markup: [{
+        tagName: 'circle',
+        selector: 'body'
+    }, {
+        tagName: 'image',
+        selector: 'icon'
+    }, {
+        tagName: 'text',
+        selector: 'label'
+    }]
+});
+
+const Message5 = dia.Element.define(ShapeTypesEnum.MESSAGE, {
+    name: 'Message5',
+    size: { width: SHAPE_SIZE, height: SHAPE_SIZE },
+    attrs: {
+        body: {
+            fill: LIGHT_COLOR,
+            stroke: '#E8E8E8',
+            cx: 'calc(0.5 * w)',
+            cy: 'calc(0.5 * h)',
+            r: 'calc(0.5 * w)',
+        },
+        icon: {
+            width: 20,
+            height: 20,
+            x: 'calc(0.5 * w - 10)',
+            y: 'calc(0.5 * h - 10)',
+            xlinkHref: MESSAGE_ICON
+        },
+        label: {
+            text: 'Component',
+            x: `calc(w + ${PADDING_L})`,
+            y: 'calc(0.5 * h)',
+            textAnchor: 'start',
+            textVerticalAnchor: 'middle',
+            fill: '#242424',
+            fontFamily: FONT_FAMILY,
+            fontSize: 13
+        }
+    }
+} as mvc.ObjectHash, {
+    markup: [{
+        tagName: 'circle',
+        selector: 'body'
+    }, {
+        tagName: 'image',
+        selector: 'icon'
+    }, {
+        tagName: 'text',
+        selector: 'label'
+    }]
+});
+
+const Message6 = dia.Element.define(ShapeTypesEnum.MESSAGE, {
+    name: 'Message6',
+    size: { width: SHAPE_SIZE, height: SHAPE_SIZE },
+    attrs: {
+        body: {
+            fill: LIGHT_COLOR,
+            stroke: '#E8E8E8',
+            cx: 'calc(0.5 * w)',
+            cy: 'calc(0.5 * h)',
+            r: 'calc(0.5 * w)',
+        },
+        icon: {
+            width: 20,
+            height: 20,
+            x: 'calc(0.5 * w - 10)',
+            y: 'calc(0.5 * h - 10)',
+            xlinkHref: MESSAGE_ICON
+        },
+        label: {
+            text: 'Component',
+            x: `calc(w + ${PADDING_L})`,
+            y: 'calc(0.5 * h)',
+            textAnchor: 'start',
+            textVerticalAnchor: 'middle',
+            fill: '#242424',
+            fontFamily: FONT_FAMILY,
+            fontSize: 13
+        }
+    }
+} as mvc.ObjectHash, {
+    markup: [{
+        tagName: 'circle',
+        selector: 'body'
+    }, {
+        tagName: 'image',
+        selector: 'icon'
+    }, {
+        tagName: 'text',
+        selector: 'label'
+    }]
+});
+
+const Message7 = dia.Element.define(ShapeTypesEnum.MESSAGE, {
+    name: 'Message7',
+    size: { width: SHAPE_SIZE, height: SHAPE_SIZE },
+    attrs: {
+        body: {
+            fill: LIGHT_COLOR,
+            stroke: '#E8E8E8',
+            cx: 'calc(0.5 * w)',
+            cy: 'calc(0.5 * h)',
+            r: 'calc(0.5 * w)',
+        },
+        icon: {
+            width: 20,
+            height: 20,
+            x: 'calc(0.5 * w - 10)',
+            y: 'calc(0.5 * h - 10)',
+            xlinkHref: MESSAGE_ICON
+        },
+        label: {
+            text: 'Component',
+            x: `calc(w + ${PADDING_L})`,
+            y: 'calc(0.5 * h)',
+            textAnchor: 'start',
+            textVerticalAnchor: 'middle',
+            fill: '#242424',
+            fontFamily: FONT_FAMILY,
+            fontSize: 13
+        }
+    }
+} as mvc.ObjectHash, {
+    markup: [{
+        tagName: 'circle',
+        selector: 'body'
+    }, {
+        tagName: 'image',
+        selector: 'icon'
+    }, {
+        tagName: 'text',
+        selector: 'label'
+    }]
+});
+
+const Message8 = dia.Element.define(ShapeTypesEnum.MESSAGE, {
+    name: 'Message8',
+    size: { width: SHAPE_SIZE, height: SHAPE_SIZE },
+    attrs: {
+        body: {
+            fill: LIGHT_COLOR,
+            stroke: '#E8E8E8',
+            cx: 'calc(0.5 * w)',
+            cy: 'calc(0.5 * h)',
+            r: 'calc(0.5 * w)',
+        },
+        icon: {
+            width: 20,
+            height: 20,
+            x: 'calc(0.5 * w - 10)',
+            y: 'calc(0.5 * h - 10)',
+            xlinkHref: MESSAGE_ICON
+        },
+        label: {
+            text: 'Component',
+            x: `calc(w + ${PADDING_L})`,
+            y: 'calc(0.5 * h)',
+            textAnchor: 'start',
+            textVerticalAnchor: 'middle',
+            fill: '#242424',
+            fontFamily: FONT_FAMILY,
+            fontSize: 13
+        }
+    }
+} as mvc.ObjectHash, {
+    markup: [{
+        tagName: 'circle',
+        selector: 'body'
+    }, {
+        tagName: 'image',
+        selector: 'icon'
+    }, {
+        tagName: 'text',
+        selector: 'label'
+    }]
+});
+
 Object.assign(shapes, {
     stencil: {
         Message,
+        Message2,
+        Message3,
+        Message4,
+        Message5,
+        Message6,
+        Message7,
+        Message8,
         FlowchartStart,
         FlowchartEnd,
     }

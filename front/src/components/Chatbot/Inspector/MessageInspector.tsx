@@ -33,45 +33,14 @@ const MessageInspector = (props: Props): ReactElement => {
     const [label, setLabel] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [icon, setIcon] = useState<string>('');
-    const [blockFunction, setBlockFunction] = useState<string>('');
-    const [ports, setPorts] = useState<InspectorPort[]>([]);
-    const [canAddPort, setCanAddPort] = useState<boolean>(false);
-
-    const assignFormPorts = useCallback((): void => {
-        setCanAddPort(cell.canAddPort('out'));
-        setPorts(
-            cell.getGroupPorts('out').map(({ id }) => {
-                return {
-                    id,
-                    label: cell.portProp(id, cellProps.portLabel),
-                };
-            }),
-        );
-    }, [cell]);
 
     const assignFormFields = useCallback((): void => {
         setLabel(cell.prop(cellProps.label));
         setDescription(cell.prop(cellProps.description));
         setIcon(cell.prop(cellProps.icon));
-        setBlockFunction(cell.prop(cellProps.blockFunction));
-        assignFormPorts();
-    }, [cell, assignFormPorts]);
+    }, [cell]);
 
     const changeCellProp = useBaseInspector({ cell, assignFormFields });
-
-    const addCellPort = (): void => {
-        cell.addDefaultPort();
-        assignFormPorts();
-    };
-
-    const removeCellPort = (portId: string): void => {
-        cell.removePort(portId);
-        assignFormPorts();
-    };
-
-    const changeCellPort = (port: InspectorPort, value: string): void => {
-        cell.portProp(port.id, cellProps.portLabel, value);
-    };
 
     return (
         <>
@@ -110,16 +79,6 @@ const MessageInspector = (props: Props): ReactElement => {
                 }
             />
             {/*TODO use InputSelect instead*/}
-            <Input
-                id="function"
-                type="text"
-                placeholder="FunctionNotSet()"
-                value={blockFunction}
-                spellCheck={false}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    changeCellProp(cellProps.blockFunction, e.target.value)
-                }
-            />
             {/*
             <select
                 onChange={(e: ChangeEvent<HTMLSelectElement>) =>
@@ -134,34 +93,6 @@ const MessageInspector = (props: Props): ReactElement => {
                 </option>
             </select>
             */}
-            <div className="ports">
-                <div className="out-ports-bar">
-                    <span>Out Ports</span>
-                    <button
-                        disabled={!canAddPort}
-                        onClick={addCellPort}
-                        className="add-port"
-                        data-tooltip="Add Output Port"
-                    ></button>
-                </div>
-                {ports.map((port) => {
-                    return (
-                        <div key={port.id} className="port">
-                            <Input
-                                defaultValue={port.label}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                    changeCellPort(port, e.target.value)
-                                }
-                            />
-                            <button
-                                className="remove-port"
-                                onClick={() => removeCellPort(port.id)}
-                                data-tooltip="Remove Output Port"
-                            ></button>
-                        </div>
-                    );
-                })}
-            </div>
         </>
     );
 };
