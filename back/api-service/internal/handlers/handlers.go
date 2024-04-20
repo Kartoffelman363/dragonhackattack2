@@ -50,6 +50,7 @@ func GetDocumentByID(c *gin.Context) {
 	docUrl := os.Getenv("DOC_URL")
 	if docUrl == "" {
 		respondWithError(c, 500, "internal server error")
+		return
 	}
 
 	url := docUrl + "/documents/" + c.Param("id")
@@ -81,6 +82,7 @@ func DeleteDocument(c *gin.Context) {
 	docUrl := os.Getenv("DOC_URL")
 	if docUrl == "" {
 		respondWithError(c, 500, "internal server error")
+		return
 	}
 
 	url := docUrl + "/documents/" + c.Param("id")
@@ -96,6 +98,7 @@ func CreateDocument(c *gin.Context) {
 	docUrl := os.Getenv("DOC_URL")
 	if docUrl == "" {
 		respondWithError(c, 500, "internal server error")
+		return
 	}
 	url := docUrl + "/documents"
 	res, err := http.NewRequest("POST", url, c.Request.Body)
@@ -128,6 +131,7 @@ func GetAllWorkflows(c *gin.Context) {
 	workflowUrl := os.Getenv("WORKFLOW_URL")
 	if workflowUrl == "" {
 		respondWithError(c, 500, "internal server error")
+		return
 	}
 	url := workflowUrl + "/workflows/"
 	res, err := http.NewRequest("GET", url, nil)
@@ -158,6 +162,7 @@ func GetWorkflowByID(c *gin.Context) {
 	workflowUrl := os.Getenv("WORKFLOW_URL")
 	if workflowUrl == "" {
 		respondWithError(c, 500, "internal server error")
+		return
 	}
 
 	url := workflowUrl + "/workflows/" + c.Param("id")
@@ -189,6 +194,7 @@ func DeleteWorkflow(c *gin.Context) {
 	workflowUrl := os.Getenv("WORKFLOW_URL")
 	if workflowUrl == "" {
 		respondWithError(c, 500, "internal server error")
+		return
 	}
 
 	url := workflowUrl + "/workflows/" + c.Param("id")
@@ -204,6 +210,7 @@ func CreateWorkflow(c *gin.Context) {
 	workflowUrl := os.Getenv("WORKFLOW_URL")
 	if workflowUrl == "" {
 		respondWithError(c, 500, "internal server error")
+		return
 	}
 	url := workflowUrl + "/workflows"
 	res, err := http.NewRequest("POST", url, c.Request.Body)
@@ -234,6 +241,7 @@ func RunWorkflow(c *gin.Context) {
 	workflowUrl := os.Getenv("WORKFLOW_URL")
 	if workflowUrl == "" {
 		respondWithError(c, 500, "internal server error")
+		return
 	}
 
 	url := workflowUrl + "/workflows/" + c.Param("id")
