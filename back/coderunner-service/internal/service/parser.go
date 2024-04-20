@@ -43,7 +43,7 @@ func convert(data interface{}, dataType string) (interface{}, error) {
 	}
 }
 
-func StartParsing(workflow models.Workflow) error {
+func StartParsing(workflow models.Workflow) (map[string]interface{}, error) {
 	globals := make(map[string]interface{})
 
 	executeOrder := stack.New()
@@ -56,10 +56,12 @@ func StartParsing(workflow models.Workflow) error {
 	for _, value := range workflow.InputVariables {
 		data, err := convert(value.Value, value.Type)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		globals[value.VarName] = data
 	}
+
+	var returnedOutput map[string]interface{}
 
 	for executeOrder.Len() > 0 {
 		initial--
@@ -73,12 +75,12 @@ func StartParsing(workflow models.Workflow) error {
 					executeOrder.Push(current, executedBlocks)
 					continue
 				} else {
-					return fmt.Errorf("cannot find input variables for block_id: %s", current.ID)
+					return nil, fmt.Errorf("cannot find input variables for block_id: %s", current.ID)
 				}
 			}
 			data, err := convert(value.(string), variable.Type)
 			if err != nil {
-				return err
+				return nil, err
 			}
 			variables[variable.VarName] = data
 		}
@@ -115,13 +117,15 @@ func StartParsing(workflow models.Workflow) error {
 
 		case "img_resize":
 			output, err = ResizeImage(variables["inputBytes"].([]byte), variables["width"].(int), variables["height"].(int))
-
+		case "output":
+			returnedOutput = variables
+			continue
 		default:
 			continue
 		}
 
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if reflect.TypeOf(output).Kind() == reflect.Slice || reflect.TypeOf(output).Kind() == reflect.Array {
@@ -138,5 +142,5 @@ func StartParsing(workflow models.Workflow) error {
 		executedBlocks++
 	}
 
-	return nil
+	return returnedOutput, nil
 }

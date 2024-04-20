@@ -28,11 +28,12 @@ func RunWorkflow(c *gin.Context) {
 		return
 	}
 
-	err = service.StartParsing(reqWorkflow)
+	value, err := service.StartParsing(reqWorkflow)
 
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
 
+	c.JSON(200, &value)
 }
