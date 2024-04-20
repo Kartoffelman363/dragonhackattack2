@@ -85,43 +85,92 @@ const Chatbot = (): ReactElement => {
     const sendJsonToBackend = (): void => {
         class InputVariable {
             VarName: string;
+            Id: string;
             Type: string;
             Value: string;
         }
         class OutputVariable {
             VarName: string;
+            Id: string;
             Type: string;
         }
         class Block {
-            Block: string;
-            InputVariables: InputVariable[];
-            OutputVariables: OutputVariable[];
-            Code: string;
-            Blocks: Block[];
+            Id: string;
+            InputVariables: InputVariable[]; // array of class InputVariable where VarName is same as input parameter of Code: string
+            // and Value is UUID of some OutputVariable
+            OutputVariables: OutputVariable[]; // array of class InputVariable where VarName is
+            Code: string; // example:     myFunction(varName1, varName2)
+            // Block.Blocks is NO MORE!!!!
+            //Blocks: Block[];
+        }
+        class ResJson {
+            Metadata: string;
+            InitialVariables: InputVariable[]; // array of class InputVariable where VarName is UUID and Value is external value defined at start
+            Blocks: Block[]; // array of class Blocks
         }
 
-        let resJson: any = {
-            metadata: jsonForBackend.current,
-            Start: {
-                InitialVariables: [],
-                Blocks: [],
-            },
-            End: {
-                OutputVariables: [],
-            },
-        };
+        // Tale JSON ti dobiš
+        let resJson: ResJson = {
+            Metadata: JSON.stringify(jsonForBackend.current),
+            InitialVariables: [] as InputVariable[], // array of class InputVariable where VarName is UUID and Value is external value defined at start
+            Blocks: [] as Block[], // array of class Blocks
+        } as ResJson;
 
         if (!jsonForBackend.current.cells) {
             console.log('Invalid jsonForBackend.');
             return;
         }
 
-        const cells: Object[] = jsonForBackend.current.cells;
+        const cells: Array<any> = jsonForBackend.current.cells;
+        cells.forEach((cell) => {
+            if (cell.type != 'app.Message') return;
+            let block: Block = {} as Block;
+            block.Id = cell.id;
+            block.Code = cell.attrs.blockFunction.text;
+            block.InputVariables = [] as InputVariable[];
+            block.OutputVariables = [] as OutputVariable[];
+            cell.ports.items.forEach((port: any) => {
+                if (port.group == 'in') {
+                    block.InputVariables.push({
+                        //TODO get proper name not uuid
+                        VarName: port.id,
+                        Id: port.id, //Ignore on backend
+                        //TODO add type
+                        Type: '',
+                        Value: '', //UUID of an OutputVariable ( OutputVariable.VarName )
+                    } as InputVariable);
+                } else if (port.group == 'out') {
+                    block.OutputVariables.push({
+                        VarName: port.id, //UUID
+                        Id: port.id, //Ignore on backend
+                        //TODO add type
+                        Type: '',
+                    } as OutputVariable);
+                }
+            });
+
+            resJson.Blocks.push(block);
+        });
+
+        cells.forEach((cell) => {
+            if (cell.type != 'app.Link') return;
+            const source = cell.source.port;
+            const target = cell.target.port;
+            resJson.Blocks.forEach((_, blockIdx: number) => {
+                resJson.Blocks[blockIdx].InputVariables.forEach(
+                    (inputVar: InputVariable, inputVarIdx: number) => {
+                        if (inputVar.Id == target) {
+                            resJson.Blocks[blockIdx].InputVariables[
+                                inputVarIdx
+                            ].Value = source;
+                        }
+                    },
+                );
+                return;
+            });
+        });
         console.log('JSON by Balenciaga:\n', jsonForBackend.current);
         console.log('JSON by H&M:\n', resJson);
-        cells.forEach((cell) => {
-            let Block: Block;
-        });
     };
 
     const toggleStencil = (): void => {
