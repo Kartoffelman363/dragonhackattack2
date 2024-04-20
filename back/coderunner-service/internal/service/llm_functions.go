@@ -68,12 +68,12 @@ func LLMImage(input string) ([]byte, error) {
 
 	response, err := openai_client.Client.CreateImage(context.Background(), request)
 	if err != nil {
-		return nil, fmt.Errorf("Image creation error: ", err)
+		return nil, fmt.Errorf("image creation error: %v", err)
 
 	}
 	imgBytes, err := base64.StdEncoding.DecodeString(response.Data[0].B64JSON)
 	if err != nil {
-		return nil, fmt.Errorf("Base64 decode error: ", err)
+		return nil, fmt.Errorf("base64 decode error: %v", err)
 
 	}
 	return imgBytes, nil
