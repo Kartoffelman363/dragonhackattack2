@@ -5,7 +5,7 @@ import (
 	models "workflow-service/pkg/models"
 
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func respondWithError(c *gin.Context, statusCode int, err string) {
@@ -13,7 +13,6 @@ func respondWithError(c *gin.Context, statusCode int, err string) {
 }
 
 func GetAllWorkflows(c *gin.Context) {
-
 	res, err := service.GetAllWorflows()
 	if err != nil {
 		respondWithError(c, 500, err.Error())
@@ -23,42 +22,47 @@ func GetAllWorkflows(c *gin.Context) {
 		respondWithError(c, 404, "No documents found")
 		return
 	}
-	body := models.Workflows{}
-	err = bson.Unmarshal(res, &body)
-	if err != nil {
-		respondWithError(c, 500, err.Error())
-		return
-	}
-	c.JSON(200, body)
+	c.JSON(200, res)
 }
 
 func GetWorkflowByID(c *gin.Context) {
-	req := models.WorkflowGetByIDRequest{
-		ID: c.Param("id"),
-	}
-	out, err := service.GetWorkflowByID(req.ID)
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-
-	body := models.Workflow{}
-	err = bson.Unmarshal(out, &body)
+	res, err := service.GetWorkflowByID(id)
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-	c.JSON(200, body)
+	c.JSON(200, res)
 }
 
 func DeleteWorkflow(c *gin.Context) {
-	req := models.WorkflowDeletionRequest{
-		ID: c.Param("id"),
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+		return
 	}
-	err := service.DeleteWorkflow(req.ID)
+	err = service.DeleteWorkflow(id)
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
 	c.JSON(200, "")
+}
+
+func CreateWorkflow(c *gin.Context) {
+	var newWorkflow models.WorkflowCreate
+	if err := c.BindJSON(&newWorkflow); err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+	res, err := service.CreateWorkflow(newWorkflow)
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+	c.JSON(200, res)
 }

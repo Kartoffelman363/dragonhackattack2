@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"document-service/internal/mongodb"
+	models "document-service/pkg/models"
 	"fmt"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func GetAllDocuments() ([]byte, error) {
+func GetAllDocuments() (*models.Documents, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -21,48 +22,58 @@ func GetAllDocuments() ([]byte, error) {
 	}
 	defer cursor.Close(ctx)
 
-	var results []bson.M
+	var results []models.Document
 	if err = cursor.All(ctx, &results); err != nil {
 		return nil, err
 	}
-	bsonBytes, err := bson.Marshal(results)
-	if err != nil {
-		return nil, err
+	var response = models.Documents{
+		Documents: results,
 	}
-	return bsonBytes, nil
+	return &response, nil
 }
 
-func GetDocumentByID(id string) ([]byte, error) {
+func GetDocumentByID(id primitive.ObjectID) (*models.Document, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	objID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return nil, fmt.Errorf("invalid ID format: %v", err)
-	}
-
 	collection := mongodb.GetCollection("yourDatabase", "documents")
-	var result bson.M
-	if err := collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&result); err != nil {
+	var result models.Document
+	if err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(&result); err != nil {
 		return nil, err
 	}
-	bsonBytes, err := bson.Marshal(result)
-	if err != nil {
-		return nil, err
-	}
-	return bsonBytes, nil
+	return &result, nil
 }
 
-func DeleteDocument(id string) error {
+func DeleteDocument(id primitive.ObjectID) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	objID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return fmt.Errorf("invalid ID format: %v", err)
-	}
-
 	collection := mongodb.GetCollection("yourDatabase", "documents")
-	_, err = collection.DeleteOne(ctx, bson.M{"_id": objID})
+	_, err := collection.DeleteOne(ctx, bson.M{"_id": id})
 	return err
+}
+
+func CreateDocument(document models.DocumentCreate) (*models.Document, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	collection := mongodb.GetCollection("yourDatabase", "documents")
+
+	result, err := collection.InsertOne(ctx, document)
+	if err != nil {
+		return nil, err
+	}
+
+	objID, ok := result.InsertedID.(primitive.ObjectID)
+	if !ok {
+		return nil, fmt.Errorf("could not insert workflow")
+	}
+
+	var insertedDocument models.Document
+
+	if err := collection.FindOne(ctx, bson.M{"_id": objID}).Decode(&insertedDocument); err != nil {
+		return nil, err
+	}
+
+	return &insertedDocument, nil
 }

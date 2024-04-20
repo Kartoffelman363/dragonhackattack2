@@ -12,10 +12,12 @@ func SetupRouter() *gin.Engine {
 	r.GET("/documents", handlers.GetAllDocuments)
 	r.GET("/documents/:id", handlers.GetDocumentByID)
 	r.DELETE("/documents/:id", handlers.DeleteDocument)
+	r.POST("/documents", handlers.CreateDocument)
 
 	r.GET("/workflows", handlers.GetAllWorkflows)
 	r.GET("/workflows/:id", handlers.GetWorkflowByID)
 	r.DELETE("/workflows/:id", handlers.DeleteWorkflow)
+	r.POST("/workflows", handlers.CreateWorkflow)
 	r.POST("/workflows/:id/run", handlers.RunWorkflow)
 
 	return r

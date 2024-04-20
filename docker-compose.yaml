@@ -24,19 +24,29 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+    environment:
+      WORKFLOW_URL: http://workflow-service
+      DOC_URL: http://document-service
+      CODERUNNER_URL: http://coderunner-service
 
   coderunner-service:
     build:
       context: ./back/coderunner-service
       dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
     depends_on:
       mongodb:
         condition: service_healthy
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
 
   document-service:
     build:
       context: ./back/document-service
       dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
     depends_on:
       mongodb:
         condition: service_healthy
@@ -47,6 +57,8 @@ services:
     build:
       context: ./back/workflow-service
       dockerfile: Dockerfile
+    ports:
+      - "8003:8003"
     depends_on:
       mongodb:
         condition: service_healthy

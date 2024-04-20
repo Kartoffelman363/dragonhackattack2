@@ -5,7 +5,7 @@ import (
 	models "document-service/pkg/models"
 
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func respondWithError(c *gin.Context, statusCode int, err string) {
@@ -23,43 +23,47 @@ func GetAllDocuments(c *gin.Context) {
 		respondWithError(c, 404, "No documents found")
 		return
 	}
-	body := models.Documents{}
-	err = bson.Unmarshal(res, &body)
-	if err != nil {
-		respondWithError(c, 500, err.Error())
-		return
-	}
-	c.JSON(200, body)
+	c.JSON(200, *res)
 }
 
 func GetDocumentByID(c *gin.Context) {
-	req := models.DocumentGetByIDRequest{
-		ID: c.Param("id"),
-	}
-
-	out, err := service.GetDocumentByID(req.ID)
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-
-	body := models.Document{}
-	err = bson.Unmarshal(out, &body)
+	res, err := service.GetDocumentByID(id)
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-	c.JSON(200, body)
+	c.JSON(200, *res)
 }
 
 func DeleteDocument(c *gin.Context) {
-	req := models.DocumentDeletionRequest{
-		ID: c.Param("id"),
+	id, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+		return
 	}
-	err := service.DeleteDocument(req.ID)
+	err = service.DeleteDocument(id)
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
 	c.JSON(200, "")
+}
+
+func CreateDocument(c *gin.Context) {
+	var newDocument models.DocumentCreate
+	if err := c.BindJSON(&newDocument); err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+	res, err := service.CreateDocument(newDocument)
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+	c.JSON(200, *res)
 }
