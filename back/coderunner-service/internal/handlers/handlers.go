@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"coderunner-service/internal/service"
 	models "coderunner-service/pkg/models"
-	_ "fmt"
+	"encoding/json"
+	"io"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,10 +14,26 @@ func respondWithError(c *gin.Context, statusCode int, err string) {
 }
 
 func RunWorkflow(c *gin.Context) {
-	reqWorkflow := models.Workflow{
-		ID:   c.Param("id"),
-		Name: c.Param("name"),
-	}
-	_ = reqWorkflow
+	reqWorkflow := models.Workflow{}
 
+	jsonData, err := io.ReadAll(c.Request.Body)
+
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+	}
+	err = json.Unmarshal(jsonData, &reqWorkflow)
+
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+
+	data, err := service.StartParsing(reqWorkflow)
+
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+
+	_ = data
 }
