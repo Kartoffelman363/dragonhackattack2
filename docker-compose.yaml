@@ -40,6 +40,8 @@ services:
         condition: service_healthy
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      WORKFLOW_URL: http://workflow-service
+      DOC_URL: http://document-service
 
   document-service:
     build:
@@ -69,6 +71,8 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
 
 volumes:
   mongodb_data:
