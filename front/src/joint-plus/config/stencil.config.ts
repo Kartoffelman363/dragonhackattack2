@@ -26,26 +26,50 @@ export const stencilConfig = {
     }, {
         name: 'Message',
         attrs: {
-            label: { text: 'User action' },
+            label: { text: 'API Request' },
             icon: { xlinkHref: USER_INPUT_ICON }
         }
     }, {
-        name: 'Message',
+        name: 'Message2',
         attrs: {
-            label: { text: 'Entity' },
-            icon: { xlinkHref: ENTITY_ICON }
+            label: { text: 'LLM Format' },
+            icon: { xlinkHref: USER_INPUT_ICON }
         }
     }, {
-        name: 'Message',
+        name: 'Message3',
         attrs: {
-            label: { text: 'Message' },
-            icon: { xlinkHref: MESSAGE_ICON }
+            label: { text: 'LLM Translate' },
+            icon: { xlinkHref: USER_INPUT_ICON }
         }
     }, {
-        name: 'Message',
+        name: 'Message4',
         attrs: {
-            label: { text: 'Confirmation' },
-            icon: { xlinkHref: CONFIRMATION_ICON }
+            label: { text: 'LLM Generate' },
+            icon: { xlinkHref: USER_INPUT_ICON }
+        }
+    }, {
+        name: 'Message5',
+        attrs: {
+            label: { text: 'LLM Keyword Generate' },
+            icon: { xlinkHref: USER_INPUT_ICON }
+        }
+    }, {
+        name: 'Message6',
+        attrs: {
+            label: { text: 'LLM Image Prompt Generate' },
+            icon: { xlinkHref: USER_INPUT_ICON }
+        }
+    }, {
+        name: 'Message7',
+        attrs: {
+            label: { text: 'LLM Image Generate' },
+            icon: { xlinkHref: USER_INPUT_ICON }
+        }
+    }, {
+        name: 'Message8',
+        attrs: {
+            label: { text: 'Get Document' },
+            icon: { xlinkHref: USER_INPUT_ICON }
         }
     }]
 };
