@@ -11,7 +11,7 @@ type (
 	}
 	node struct {
 		counter int
-		value   *models.Workflow
+		value   *models.Block
 		prev    *node
 	}
 )
@@ -27,7 +27,7 @@ func (this *Stack) Len() int {
 }
 
 // View the top item on the stack
-func (this *Stack) Peek() (*models.Workflow, int) {
+func (this *Stack) Peek() (*models.Block, int) {
 	if this.length == 0 {
 		return nil, 0
 	}
@@ -35,7 +35,7 @@ func (this *Stack) Peek() (*models.Workflow, int) {
 }
 
 // Pop the top item of the stack and return it
-func (this *Stack) Pop() (*models.Workflow, int) {
+func (this *Stack) Pop() (*models.Block, int) {
 	if this.length == 0 {
 		return nil, 0
 	}
@@ -47,7 +47,7 @@ func (this *Stack) Pop() (*models.Workflow, int) {
 }
 
 // Push a value onto the top of the stack
-func (this *Stack) Push(value *models.Workflow, counter int) {
+func (this *Stack) Push(value *models.Block, counter int) {
 	n := &node{counter, value, this.top}
 	this.top = n
 	this.length++

@@ -48,8 +48,8 @@ func StartParsing(workflow models.Workflow) error {
 
 	executeOrder := stack.New()
 	executedBlocks := 0
-	initial := len(workflow.Blocks.Workflows)
-	for _, value := range workflow.Blocks.Workflows {
+	initial := len(workflow.Blocks)
+	for _, value := range workflow.Blocks {
 		executeOrder.Push(&value, executedBlocks)
 	}
 
@@ -64,10 +64,6 @@ func StartParsing(workflow models.Workflow) error {
 	for executeOrder.Len() > 0 {
 		initial--
 		current, counter := executeOrder.Pop()
-		for _, value := range current.Blocks.Workflows {
-			executeOrder.Push(&value, executedBlocks)
-		}
-
 		variables := make(map[string]interface{})
 
 		for _, variable := range current.InputVariables {

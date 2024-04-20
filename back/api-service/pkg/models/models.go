@@ -19,19 +19,24 @@ type OutputVariable struct {
 	Type    string `json:"type" bson:"type"`
 }
 
-type Workflow struct {
+type Block struct {
 	ID              primitive.ObjectID `json:"_id" bson:"_id"`
 	InputVariables  []InputVariable    `json:"input_variables" bson:"input_variables"`
 	OutputVariables []OutputVariable   `json:"output_variables" bson:"output_variables"`
 	Code            string             `json:"code" bson:"code"`
-	Blocks          Workflows          `json:"blocks" bson:"blocks"`
+}
+
+type Workflow struct {
+	ID             primitive.ObjectID `json:"_id" bson:"_id"`
+	Metadata       string             `json:"metadata" bson:"metadata"`
+	Blocks         []Block            `json:"blocks" bson:"blocks"`
+	InputVariables []InputVariable    `json:"input_variables" bson:"input_variables"`
 }
 
 type WorkflowCreate struct {
-	InputVariables  []InputVariable  `json:"input_variables" bson:"input_variables"`
-	OutputVariables []OutputVariable `json:"output_variables" bson:"output_variables"`
-	Code            string           `json:"code" bson:"code"`
-	Blocks          Workflows        `json:"blocks" bson:"blocks"`
+	Metadata       string          `json:"metadata" bson:"metadata"`
+	Blocks         []Block         `json:"blocks" bson:"blocks"`
+	InputVariables []InputVariable `json:"input_variables" bson:"input_variables"`
 }
 
 type Document struct {
