@@ -1,0 +1,62 @@
+version: '3.8'
+services:
+  mongodb:
+    image: "mongo"
+    volumes:
+      - "mongodb_data:/data/db"
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: pass
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 6s
+      timeout: 30s
+      retries: 10
+
+  api-service:
+    build:
+      context: ./back/api-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  coderunner-service:
+    build:
+      context: ./back/coderunner-service
+      dockerfile: Dockerfile
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  document-service:
+    build:
+      context: ./back/document-service
+      dockerfile: Dockerfile
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      MONGODB_URI: mongodb://user:pass@mongodb:27017
+
+  workflow-service:
+    build:
+      context: ./back/workflow-service
+      dockerfile: Dockerfile
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      MONGODB_URI: mongodb://user:pass@mongodb:27017
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+
+volumes:
+  mongodb_data:
