@@ -10,37 +10,36 @@ import (
 	"coderunner-service/internal/stack"
 )
 
-func convert(data string, dataType string) (interface{}, error) {
+func convert(data interface{}, dataType string) (interface{}, error) {
 	switch dataType {
 	case "string":
-		return data, nil
+		return data.(string), nil
 	case "int":
-		val, err := strconv.ParseInt(data, 10, 64)
+		val, err := strconv.ParseInt(data.(string), 10, 64)
 		if err != nil {
 			return nil, err
 		}
 		return int(val), nil
 	case "float":
-		val, err := strconv.ParseFloat(data, 64)
+		val, err := strconv.ParseFloat(data.(string), 64)
 		if err != nil {
 			return nil, err
 		}
 		return int(val), nil
 	case "hex":
-		val, err := strconv.ParseInt(data, 16, 64)
+		val, err := strconv.ParseInt(data.(string), 16, 64)
 		if err != nil {
 			return nil, err
 		}
 		return int(val), nil
 	case "oct":
-		val, err := strconv.ParseInt(data, 8, 64)
+		val, err := strconv.ParseInt(data.(string), 8, 64)
 		if err != nil {
 			return nil, err
 		}
 		return int(val), nil
 	default:
-		return nil, fmt.Errorf("cannot parse variable to type %s", dataType)
-
+		return data, nil
 	}
 }
 
@@ -73,12 +72,13 @@ func StartParsing(workflow models.Workflow) error {
 
 		for _, variable := range current.InputVariables {
 			value, ok := globals[variable.Value]
-			if !ok && (counter != executedBlocks || initial > 0) {
-
-				executeOrder.Push(current, executedBlocks)
-				continue
-			} else {
-				return fmt.Errorf("cannot find input variables for block_id: %s", current.ID)
+			if !ok {
+				if counter != executedBlocks || initial > 0 {
+					executeOrder.Push(current, executedBlocks)
+					continue
+				} else {
+					return fmt.Errorf("cannot find input variables for block_id: %s", current.ID)
+				}
 			}
 			data, err := convert(value.(string), variable.Type)
 			if err != nil {
