@@ -9,7 +9,6 @@ import { Subscription } from 'rxjs';
 
 import './Chatbot.scss';
 import JointPlusService from '../../services/joint-plus.service';
-import JsonEditor from './JsonEditor/JsonEditor';
 import Inspector from './Inspector/Inspector';
 import EventBusServiceContext from '../../services/event-bus-service.context';
 import { EventBusService } from '../../services/event-bus.service';
@@ -33,7 +32,6 @@ const Chatbot = (): ReactElement => {
     const [joint, setJoint] = useState(null);
     const [eventBusService] = useState(new EventBusService());
     const [stencilOpened, setStencilOpened] = useState(true);
-    const [jsonEditorOpened, setJsonEditorOpened] = useState(true);
     const [fileJSON, setFileJSON] = useState(null);
     const [subscriptions] = useState(new Subscription());
 
@@ -77,10 +75,6 @@ const Chatbot = (): ReactElement => {
             scroller.el.scrollLeft -= STENCIL_WIDTH;
         }
     }, [joint, stencilOpened]);
-
-    const toggleJsonEditor = (): void => {
-        setJsonEditorOpened(!jsonEditorOpened);
-    };
 
     const sendJsonToBackend = async (): Promise<void> => {
         console.log('JSON by Balenciaga:\n', jsonForBackend.current);
@@ -272,15 +266,6 @@ const Chatbot = (): ReactElement => {
                             data-tooltip-position-selector=".toggle-bar"
                         />
                         <div
-                            onClick={toggleJsonEditor}
-                            className={
-                                'icon toggle-editor ' +
-                                (!jsonEditorOpened ? 'disabled-icon' : '')
-                            }
-                            data-tooltip="Toggle JSON Editor"
-                            data-tooltip-position-selector=".toggle-bar"
-                        />
-                        <div
                             onClick={sendJsonToBackend}
                             className="icon toggle-editor "
                             data-tooltip="Send JSON"
@@ -295,13 +280,6 @@ const Chatbot = (): ReactElement => {
                 </div>
                 <div className="main-container">
                     <div ref={paperRef} className="paper-container" />
-                    <div
-                        style={{
-                            display: jsonEditorOpened ? 'initial' : 'none',
-                        }}
-                    >
-                        <JsonEditor content={fileJSON} />
-                    </div>
                 </div>
                 <Inspector />
             </div>
