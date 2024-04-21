@@ -35,5 +35,5 @@ func RunWorkflow(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, &value)
+	c.JSON(200, value)
 }

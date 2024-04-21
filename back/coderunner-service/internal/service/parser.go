@@ -45,7 +45,7 @@ func convert(data interface{}, dataType string) (interface{}, error) {
 	}
 }
 
-func StartParsing(workflow models.Workflow) ([]byte, error) {
+func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 	globals := make(map[string]interface{})
 
 	executeOrder := queue.New()
@@ -192,5 +192,5 @@ func StartParsing(workflow models.Workflow) ([]byte, error) {
 	fmt.Print("OUTPUT ")
 	fmt.Println(string(jsonString))
 
-	return jsonString, nil
+	return returnedOutput, nil
 }
