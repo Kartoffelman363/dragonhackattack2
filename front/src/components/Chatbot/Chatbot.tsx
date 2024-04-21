@@ -151,9 +151,10 @@ const Chatbot = (): ReactElement => {
                             VarName: port.id, //UUID
                             Id: port.id, //Ignore on backend
                             Type: port.type,
-                            Value: cell.constValue,
+                            Value: cell.attrs.constValue.text,
                         } as Variable);
                     });
+                    console.log('Const value: ', cell);
                     resJson.Blocks.push(block);
                     break;
             }
