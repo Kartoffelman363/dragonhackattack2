@@ -72,6 +72,12 @@ export const stencilConfig = {
             icon: { xlinkHref: USER_INPUT_ICON }
         }
     }, {
+        name: 'Message9',
+        attrs: {
+            label: { text: 'Display Block Output' },
+            icon: { xlinkHref: USER_INPUT_ICON }
+        }
+    }, {
         name: 'Constant',
         attrs: {
             label: { text: 'Constant Value' },

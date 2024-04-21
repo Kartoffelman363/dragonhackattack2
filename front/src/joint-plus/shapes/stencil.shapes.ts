@@ -447,6 +447,49 @@ const Message8 = dia.Element.define(ShapeTypesEnum.MESSAGE, {
     }]
 });
 
+const Message9 = dia.Element.define(ShapeTypesEnum.MESSAGE, {
+    name: 'Message9',
+    size: { width: SHAPE_SIZE, height: SHAPE_SIZE },
+    attrs: {
+        body: {
+            fill: LIGHT_COLOR,
+            stroke: '#E8E8E8',
+            cx: 'calc(0.5 * w)',
+            cy: 'calc(0.5 * h)',
+            r: 'calc(0.5 * w)',
+        },
+        icon: {
+            width: 20,
+            height: 20,
+            x: 'calc(0.5 * w - 10)',
+            y: 'calc(0.5 * h - 10)',
+            xlinkHref: MESSAGE_ICON
+        },
+        label: {
+            text: 'Component',
+            x: `calc(w + ${PADDING_L})`,
+            y: 'calc(0.5 * h)',
+            textAnchor: 'start',
+            textVerticalAnchor: 'middle',
+            fill: '#242424',
+            fontFamily: FONT_FAMILY,
+            fontSize: 13
+        }
+    }
+} as mvc.ObjectHash, {
+    markup: [{
+        tagName: 'circle',
+        selector: 'body'
+    }, {
+        tagName: 'image',
+        selector: 'icon'
+    }, {
+        tagName: 'text',
+        selector: 'label'
+    }]
+});
+
+
 const Constant = dia.Element.define(ShapeTypesEnum.CONSTANT, {
     name: 'Constant',
     size: { width: SHAPE_SIZE, height: SHAPE_SIZE },
@@ -499,6 +542,7 @@ Object.assign(shapes, {
         Message6,
         Message7,
         Message8,
+        Message9,
         Constant,
         FlowchartStart,
         FlowchartEnd,
