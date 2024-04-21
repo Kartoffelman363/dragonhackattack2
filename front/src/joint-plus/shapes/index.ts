@@ -29,6 +29,11 @@ declare module '@joint/plus' {
                 canAddPort(group: string): boolean;
                 toggleAddPortButton(group: string): void;
             }
+            class Constant extends Base {
+                addDefaultPort(): void;
+                canAddPort(group: string): boolean;
+                toggleAddPortButton(group: string): void;
+            }
             class FlowchartStart extends Base {
             }
             class FlowchartEnd extends Base {
@@ -38,6 +43,8 @@ declare module '@joint/plus' {
         }
         namespace stencil {
             class Message extends dia.Element {
+            }
+            class Constant extends dia.Element {
             }
             class FlowchartStart extends dia.Element {
             }

@@ -23,6 +23,7 @@ import {
 
 export enum ShapeTypesEnum {
     MESSAGE = 'stencil.Message',
+    CONSTANT = 'stencil.Constant',
     FLOWCHART_START = 'stencil.FlowchartStart',
     FLOWCHART_END = 'stencil.FlowchartEnd',
     ABC = 'stencil.Abc'
@@ -446,8 +447,8 @@ const Message8 = dia.Element.define(ShapeTypesEnum.MESSAGE, {
     }]
 });
 
-const Message9 = dia.Element.define(ShapeTypesEnum.MESSAGE, {
-    name: 'Message9',
+const Constant = dia.Element.define(ShapeTypesEnum.CONSTANT, {
+    name: 'Constant',
     size: { width: SHAPE_SIZE, height: SHAPE_SIZE },
     attrs: {
         body: {
@@ -498,7 +499,7 @@ Object.assign(shapes, {
         Message6,
         Message7,
         Message8,
-        Message9,
+        Constant,
         FlowchartStart,
         FlowchartEnd,
     }

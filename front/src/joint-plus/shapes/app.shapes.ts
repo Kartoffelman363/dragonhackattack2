@@ -33,6 +33,7 @@ import {
 export enum ShapeTypesEnum {
     BASE = 'app.Base',
     MESSAGE = 'app.Message',
+    CONSTANT = 'app.Constant',
     FLOWCHART_START = 'app.FlowchartStart',
     FLOWCHART_END = 'app.FlowchartEnd',
     LINK = 'app.Link'
@@ -1349,7 +1350,7 @@ const Message8 = Base.define(ShapeTypesEnum.MESSAGE, {
     }
 });
 
-const Message9 = Base.define(ShapeTypesEnum.MESSAGE, {
+const Constant = Base.define(ShapeTypesEnum.CONSTANT, {
     function: "const",
     constValue: "",
     size: { width: 368, height: 120 },
@@ -1745,7 +1746,7 @@ Object.assign(shapes, {
         Message6,
         Message7,
         Message8,
-        Message9,
+        Constant,
         FlowchartStart,
         FlowchartEnd,
         Link
