@@ -45,7 +45,7 @@ func convert(data interface{}, dataType string) (interface{}, error) {
 	}
 }
 
-func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
+func StartParsing(workflow models.Workflow) ([]byte, error) {
 	globals := make(map[string]interface{})
 
 	executeOrder := queue.New()
@@ -71,6 +71,9 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 	returnedOutput := make(map[string]models.Output)
 
 	for executeOrder.Len() > 0 {
+		jsonString, _ := json.Marshal(globals)
+		fmt.Print("GLOBALS ")
+		fmt.Println(string(jsonString))
 		initial--
 		current, counter := executeOrder.Dequeue()
 		fmt.Println("eXECUTING BLOCK TYPE", current.Code)
@@ -85,26 +88,35 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 		} else {
 			fmt.Println(executeOrder.String())
 			variables := make(map[string]interface{})
+			breakage := false
 			for _, variable := range current.InputVariables {
+				fmt.Println(variable.VarName, " ", variable.Value, " ", variable.Id)
 				value, ok := globals[variable.Value]
 				if !ok {
 					if counter != executedBlocks || initial > 0 {
+						fmt.Println("enqued")
 						executeOrder.Enqueue(current, executedBlocks)
-						continue
+						breakage = true
+						break
 					} else {
 						return nil, fmt.Errorf("cannot find input variables for block_id: %s", current.ID)
 					}
 				}
-				data, err := convert(value.(string), variable.Type)
+				fmt.Println("OK")
+				/*data, err := convert(value.(string), variable.Type)
 				if err != nil {
 					return nil, err
-				}
-				variables[strings.ToLower(variable.VarName)] = data
+				}*/
+				fmt.Println("OK")
+				variables[strings.ToLower(variable.VarName)] = value
+			}
+			if breakage {
+				continue
 			}
 			jsonString, _ := json.Marshal(variables)
-
 			fmt.Print("VARIABLES ")
 			fmt.Println(string(jsonString))
+			var pointer *string
 			var output interface{}
 			var err error
 			switch current.Code {
@@ -122,25 +134,24 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 					contentType = "application/json"
 				}
 				output, err = ApiRequests(variables["url"].(string), variables["body"].(string), requestMethod.(string), contentType.(string))
-
 			case "llm_formater":
-				output, err = LLMFormater(variables["input"].(string), variables["example"].(string))
-
+				pointer, err = LLMFormater(variables["input"].(string), variables["example"].(string))
+				output = *pointer
 			case "llm_translator":
-				output, err = LLMFormater(variables["input"].(string), variables["language"].(string))
-
+				pointer, err = LLMFormater(variables["input"].(string), variables["language"].(string))
+				output = *pointer
 			case "llm_generate_image":
 				output, err = LLMImage(variables["input"].(string))
 
 			case "llm_generate_image_prompt":
-				output, err = LLMImagePrompt(variables["input"].(string))
-
+				pointer, err = LLMImagePrompt(variables["input"].(string))
+				output = *pointer
 			case "llm_generate_keyword":
-				output, err = LLMKeywords(variables["input"].(string))
-
+				pointer, err = LLMKeywords(variables["input"].(string))
+				output = *pointer
 			case "llm_generate":
-				output, err = LLMGenerate(variables["input"].(string))
-
+				pointer, err = LLMGenerate(variables["input"].(string))
+				output = *pointer
 			case "img_resize":
 				output, err = ResizeImage(variables["inputbytes"].([]byte), variables["width"].(int), variables["height"].(int))
 
@@ -181,5 +192,5 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 	fmt.Print("OUTPUT ")
 	fmt.Println(string(jsonString))
 
-	return returnedOutput, nil
+	return jsonString, nil
 }
