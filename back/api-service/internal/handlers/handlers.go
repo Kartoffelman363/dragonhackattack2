@@ -263,5 +263,5 @@ func RunWorkflow(c *gin.Context) {
 	}
 	runResponse.Body.Close()
 
-	c.JSON(200, gin.H{"message": "Workflow run successfully"})
+	c.JSON(200, runResponse)
 }
