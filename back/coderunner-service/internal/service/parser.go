@@ -53,12 +53,12 @@ func StartParsing(workflow models.Workflow) (map[string]interface{}, error) {
 		executeOrder.Push(&value, executedBlocks)
 	}
 
-	for _, value := range workflow.InputVariables {
+	for _, value := range workflow.InitialVariables {
 		data, err := convert(value.Value, value.Type)
 		if err != nil {
 			return nil, err
 		}
-		globals[value.ID] = data
+		globals[value.Id] = data
 	}
 
 	var returnedOutput map[string]interface{}
@@ -72,7 +72,7 @@ func StartParsing(workflow models.Workflow) (map[string]interface{}, error) {
 				if err != nil {
 					return nil, err
 				}
-				globals[value.ID] = data
+				globals[value.Id] = data
 			}
 		} else {
 			variables := make(map[string]interface{})
