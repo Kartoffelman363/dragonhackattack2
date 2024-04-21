@@ -1349,6 +1349,164 @@ const Message8 = Base.define(ShapeTypesEnum.MESSAGE, {
     }
 });
 
+const Message9 = Base.define(ShapeTypesEnum.MESSAGE, {
+    function: "const",
+    constValue: "",
+    size: { width: 368, height: 120 },
+    ports: {
+        groups: {
+            in: {
+                position: {
+                    name: 'top',
+                },
+                size: {
+                    width: 16,
+                    height: 16
+                },
+                attrs: {
+                    portBody: {
+                        magnet: 'passive',
+                        width: 'calc(w)',
+                        height: 'calc(h)',
+                        y: 'calc(-0.5 * h)',
+                        rx: PORT_BORDER_RADIUS,
+                        ry: PORT_BORDER_RADIUS,
+                        fill: LIGHT_COLOR,
+                        stroke: DARK_COLOR,
+                        strokeWidth: LINE_WIDTH
+                    },
+                    portLabel: {
+                        pointerEvents: 'none',
+                        fontFamily: FONT_FAMILY,
+                        fontWeight: 400,
+                        fontSize: 13,
+                        fill: DARK_COLOR,
+                        textAnchor: 'middle',
+                        textVerticalAnchor: 'bottom',
+                        x: 'calc(w / 2)',
+                        y: '25'
+                    }
+                },
+                markup: [{
+                    tagName: 'rect',
+                    selector: 'portBody'
+                }, {
+                    tagName: 'text',
+                    selector: 'portLabel',
+                }]
+            },
+            out: {
+                position: {
+                    name: 'bottom',
+                },
+                size: {
+                    width: OUT_PORT_WIDTH,
+                    height: OUT_PORT_HEIGHT
+                },
+                attrs: {
+                    portBody: {
+                        magnet: 'active',
+                        width: 'calc(w)',
+                        height: 'calc(h)',
+                        x: 'calc(-0.5 * w)',
+                        y: 'calc(-0.5 * h)',
+                        fill: DARK_COLOR,
+                        ry: PORT_BORDER_RADIUS,
+                        rx: PORT_BORDER_RADIUS
+                    },
+                    portLabel: {
+                        pointerEvents: 'none',
+                        fontFamily: FONT_FAMILY,
+                        fontWeight: 400,
+                        fontSize: 13,
+                        fill: LIGHT_COLOR,
+                        textAnchor: 'start',
+                        textVerticalAnchor: 'middle',
+                        x: PADDING_L - OUT_PORT_WIDTH / 2
+                    }
+                },
+                markup: [{
+                    tagName: 'rect',
+                    selector: 'portBody'
+                }, {
+                    tagName: 'text',
+                    selector: 'portLabel',
+                }]
+            }
+        },
+        items: [
+            { group: 'out', type: 'string', attrs: { portLabel: { text: 'Constant' }}}
+        ]
+    },
+    attrs: {
+        body: {
+            width: 'calc(w)',
+            height: 'calc(h)',
+            fill: LIGHT_COLOR,
+            strokeWidth: LINE_WIDTH / 2,
+            stroke: '#D4D4D4',
+            rx: 3,
+            ry: 3,
+        },
+        label: {
+            x: 54,
+            y: 34,
+            fontFamily: FONT_FAMILY,
+            fontWeight: 600,
+            fontSize: 16,
+            fill: '#322A49',
+            text: 'Label',
+            textWrap: {
+                width: - 54 - PADDING_L,
+                maxLineCount: 1,
+                ellipsis: true
+            },
+            textVerticalAnchor: 'top',
+        },
+        description: {
+            x: 54,
+            y: 53,
+            fontFamily: FONT_FAMILY,
+            fontWeight: 400,
+            fontSize: 13,
+            lineHeight: 13,
+            fill: '#655E77',
+            textVerticalAnchor: 'top',
+            text: 'Description',
+            textWrap: {
+                width: - 54 - PADDING_L,
+                maxLineCount: 2,
+                ellipsis: true
+            }
+        },
+        icon: {
+            width: 20,
+            height: 20,
+            x: PADDING_L,
+            y: 34,
+            xlinkHref: 'https://image.flaticon.com/icons/svg/151/151795.svg'
+        }
+    },
+    markup: [{
+        tagName: 'rect',
+        selector: 'body',
+    }, {
+        tagName: 'text',
+        selector: 'label',
+    }, {
+        tagName: 'text',
+        selector: 'description',
+    }, {
+        tagName: 'image',
+        selector: 'icon',
+    }],
+    boundaryPadding: {
+        horizontal: PADDING_L,
+        top: PADDING_L * 2,
+        bottom: OUT_PORT_HEIGHT / 2 + PADDING_L
+    }
+});
+
 const FlowchartStart = Base.define(ShapeTypesEnum.FLOWCHART_START, {
     size: { width: 48, height: 48 },
     ports: {
@@ -1587,6 +1745,7 @@ Object.assign(shapes, {
         Message6,
         Message7,
         Message8,
+        Message9,
         FlowchartStart,
         FlowchartEnd,
         Link
