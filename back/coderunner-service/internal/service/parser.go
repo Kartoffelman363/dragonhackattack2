@@ -2,9 +2,11 @@ package service
 
 import (
 	models "coderunner-service/pkg/models"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strconv"
+	"strings"
 
 	internalhandlers "coderunner-service/internal/internal_handlers"
 	"coderunner-service/internal/stack"
@@ -43,7 +45,7 @@ func convert(data interface{}, dataType string) (interface{}, error) {
 	}
 }
 
-func StartParsing(workflow models.Workflow) (map[string]interface{}, error) {
+func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 	globals := make(map[string]interface{})
 
 	executeOrder := stack.New()
@@ -61,7 +63,14 @@ func StartParsing(workflow models.Workflow) (map[string]interface{}, error) {
 		globals[value.Id] = data
 	}
 
-	var returnedOutput map[string]interface{}
+	jsonString, err := json.Marshal(globals)
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	fmt.Print("GLOBALS ")
+	fmt.Println(string(jsonString))
+
+	returnedOutput := make(map[string]models.Output)
 
 	for executeOrder.Len() > 0 {
 		initial--
@@ -90,9 +99,14 @@ func StartParsing(workflow models.Workflow) (map[string]interface{}, error) {
 				if err != nil {
 					return nil, err
 				}
-				variables[variable.VarName] = data
+				variables[strings.ToLower(variable.VarName)] = data
 			}
-			fmt.Print(variables)
+			jsonString, err = json.Marshal(variables)
+			if err != nil {
+				fmt.Println("Error:", err)
+			}
+			fmt.Print("VARIABLES ")
+			fmt.Println(string(jsonString))
 
 			var output interface{}
 			var err error
@@ -132,8 +146,16 @@ func StartParsing(workflow models.Workflow) (map[string]interface{}, error) {
 
 			case "img_resize":
 				output, err = ResizeImage(variables["inputBytes"].([]byte), variables["width"].(int), variables["height"].(int))
+
 			case "output":
-				returnedOutput = variables
+				for key, value := range variables {
+					byteValue, ok := value.([]byte)
+					if !ok {
+						returnedOutput[key] = models.Output{Type: "string", Value: value.(string)}
+					} else {
+						returnedOutput[key] = models.Output{Type: "image", Value: string(byteValue)}
+					}
+				}
 				continue
 			default:
 				continue
