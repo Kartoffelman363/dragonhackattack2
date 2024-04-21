@@ -268,5 +268,5 @@ func RunWorkflow(c *gin.Context) {
 		respondWithError(c, 500, "Failed to read response body: "+err.Error())
 		return
 	}
-	c.JSON(200, body)
+	c.JSON(200, string(body))
 }
