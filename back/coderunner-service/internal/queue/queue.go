@@ -2,6 +2,8 @@ package queue
 
 import (
 	models "coderunner-service/pkg/models"
+	"fmt"
+	"strings"
 )
 
 type (
@@ -62,4 +64,22 @@ func (q *Queue) Enqueue(value *models.Block, counter int) {
 		q.rear = n
 	}
 	q.length++
+}
+
+func (q *Queue) String() string {
+	var sb strings.Builder
+	sb.WriteString(fmt.Sprintf("Queue Length: %d\n", q.length))
+	sb.WriteString("Queue Content: [")
+
+	currentNode := q.front
+	for currentNode != nil {
+		sb.WriteString(fmt.Sprintf("{ID: %s, Counter: %d}", currentNode.value.Code, currentNode.counter))
+		if currentNode.next != nil {
+			sb.WriteString(", ")
+		}
+		currentNode = currentNode.next
+	}
+
+	sb.WriteString("]")
+	return sb.String()
 }

@@ -51,10 +51,14 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 	executeOrder := queue.New()
 	executedBlocks := 0
 	initial := len(workflow.Blocks)
+	val, _ := json.Marshal(workflow.Blocks)
+	fmt.Println(string(val))
 	for _, value := range workflow.Blocks {
 		fmt.Println(value)
-		executeOrder.Enqueue(&value, executedBlocks)
+		temp := value
+		executeOrder.Enqueue(&temp, executedBlocks)
 	}
+	fmt.Println(executeOrder.String())
 
 	for _, value := range workflow.InitialVariables {
 		data, err := convert(value.Value, value.Type)
@@ -79,6 +83,7 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 				globals[value.Id] = data
 			}
 		} else {
+			fmt.Println(executeOrder.String())
 			variables := make(map[string]interface{})
 			for _, variable := range current.InputVariables {
 				value, ok := globals[variable.Value]
