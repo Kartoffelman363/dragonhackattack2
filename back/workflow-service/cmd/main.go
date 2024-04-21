@@ -13,8 +13,8 @@ func main() {
 
 	r := router.SetupRouter()
 
-	log.Println("Starting workflow service on port 8083...")
-	if err := r.Run(":8083"); err != nil {
+	log.Println("Starting workflow service on port 8003...")
+	if err := r.Run(":8003"); err != nil {
 		log.Fatal("Failed to start API service:", err)
 	}
 }

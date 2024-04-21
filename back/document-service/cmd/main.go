@@ -13,8 +13,8 @@ func main() {
 
 	r := router.SetupRouter()
 
-	log.Println("Starting document service on port 8082...")
-	if err := r.Run(":8082"); err != nil {
+	log.Println("Starting document service on port 8002...")
+	if err := r.Run(":8002"); err != nil {
 		log.Fatal("Failed to start API service:", err)
 	}
 }

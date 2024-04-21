@@ -170,7 +170,7 @@ const Chatbot = (): ReactElement => {
             });
         });
 
-        fetch('http://api-service', {
+        fetch('http://127.0.0.1:8000/workflows', {
             method: 'POST',
             body: JSON.stringify(resJson),
             headers: {
