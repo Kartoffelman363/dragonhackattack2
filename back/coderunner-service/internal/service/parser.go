@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	internalhandlers "coderunner-service/internal/internal_handlers"
-	"coderunner-service/internal/stack"
+	"coderunner-service/internal/queue"
 )
 
 func convert(data interface{}, dataType string) (interface{}, error) {
@@ -48,11 +48,12 @@ func convert(data interface{}, dataType string) (interface{}, error) {
 func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 	globals := make(map[string]interface{})
 
-	executeOrder := stack.New()
+	executeOrder := queue.New()
 	executedBlocks := 0
 	initial := len(workflow.Blocks)
 	for _, value := range workflow.Blocks {
-		executeOrder.Push(&value, executedBlocks)
+		fmt.Println(value)
+		executeOrder.Enqueue(&value, executedBlocks)
 	}
 
 	for _, value := range workflow.InitialVariables {
@@ -63,18 +64,12 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 		globals[value.Id] = data
 	}
 
-	jsonString, err := json.Marshal(globals)
-	if err != nil {
-		fmt.Println("Error:", err)
-	}
-	fmt.Print("GLOBALS ")
-	fmt.Println(string(jsonString))
-
 	returnedOutput := make(map[string]models.Output)
 
 	for executeOrder.Len() > 0 {
 		initial--
-		current, counter := executeOrder.Pop()
+		current, counter := executeOrder.Dequeue()
+		fmt.Println("eXECUTING BLOCK TYPE", current.Code)
 		if current.Code == "constants" {
 			for _, value := range current.OutputVariables {
 				data, err := convert(value.Value, value.Type)
@@ -89,7 +84,7 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 				value, ok := globals[variable.Value]
 				if !ok {
 					if counter != executedBlocks || initial > 0 {
-						executeOrder.Push(current, executedBlocks)
+						executeOrder.Enqueue(current, executedBlocks)
 						continue
 					} else {
 						return nil, fmt.Errorf("cannot find input variables for block_id: %s", current.ID)
@@ -101,26 +96,23 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 				}
 				variables[strings.ToLower(variable.VarName)] = data
 			}
-			jsonString, err = json.Marshal(variables)
-			if err != nil {
-				fmt.Println("Error:", err)
-			}
+			jsonString, _ := json.Marshal(variables)
+
 			fmt.Print("VARIABLES ")
 			fmt.Println(string(jsonString))
-
 			var output interface{}
 			var err error
 			switch current.Code {
 			case "get_document":
-				output, err = internalhandlers.GetDocumentByID(variables["_id"].(string))
+				output, err = internalhandlers.GetDocumentByID(variables["id"].(string))
 
 			case "api_request":
 
-				requestMethod, ok := variables["requestMethod"]
+				requestMethod, ok := variables["requestmethod"]
 				if !ok {
 					requestMethod = "POST"
 				}
-				contentType, ok := variables["contentType"]
+				contentType, ok := variables["contenttype"]
 				if !ok {
 					contentType = "application/json"
 				}
@@ -130,7 +122,7 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 				output, err = LLMFormater(variables["input"].(string), variables["example"].(string))
 
 			case "llm_translator":
-				output, err = LLMFormater(variables["input"].(string), variables["example"].(string))
+				output, err = LLMFormater(variables["input"].(string), variables["language"].(string))
 
 			case "llm_generate_image":
 				output, err = LLMImage(variables["input"].(string))
@@ -145,10 +137,11 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 				output, err = LLMGenerate(variables["input"].(string))
 
 			case "img_resize":
-				output, err = ResizeImage(variables["inputBytes"].([]byte), variables["width"].(int), variables["height"].(int))
+				output, err = ResizeImage(variables["inputbytes"].([]byte), variables["width"].(int), variables["height"].(int))
 
 			case "output":
 				for key, value := range variables {
+					fmt.Println(key, value)
 					byteValue, ok := value.([]byte)
 					if !ok {
 						returnedOutput[key] = models.Output{Type: "string", Value: value.(string)}
@@ -178,6 +171,10 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 		}
 		executedBlocks++
 	}
+
+	jsonString, _ := json.Marshal(returnedOutput)
+	fmt.Print("OUTPUT ")
+	fmt.Println(string(jsonString))
 
 	return returnedOutput, nil
 }
