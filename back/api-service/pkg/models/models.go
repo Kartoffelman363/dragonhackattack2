@@ -8,6 +8,11 @@ import (
 
 // when changing file make sure to update across repo
 
+type Output struct {
+	Type  string `json:"type" bson:"type"`
+	Value string `json:"value" bson:"value"`
+}
+
 type Variable struct {
 	Id      string `json:"id" bson:"id"`
 	VarName string `json:"varname" bson:"varname"`
