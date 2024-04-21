@@ -261,7 +261,12 @@ func RunWorkflow(c *gin.Context) {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-	runResponse.Body.Close()
+	defer runResponse.Body.Close()
 
-	c.JSON(200, runResponse)
+	body, err = io.ReadAll(runResponse.Body)
+	if err != nil {
+		respondWithError(c, 500, "Failed to read response body: "+err.Error())
+		return
+	}
+	c.JSON(200, body)
 }
