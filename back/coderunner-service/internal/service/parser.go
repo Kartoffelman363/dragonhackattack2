@@ -58,7 +58,7 @@ func StartParsing(workflow models.Workflow) (map[string]interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		globals[value.VarName] = data
+		globals[value.ID] = data
 	}
 
 	var returnedOutput map[string]interface{}
@@ -72,7 +72,7 @@ func StartParsing(workflow models.Workflow) (map[string]interface{}, error) {
 				if err != nil {
 					return nil, err
 				}
-				globals[value.VarName] = data
+				globals[value.ID] = data
 			}
 		} else {
 			variables := make(map[string]interface{})
@@ -92,6 +92,7 @@ func StartParsing(workflow models.Workflow) (map[string]interface{}, error) {
 				}
 				variables[variable.VarName] = data
 			}
+			fmt.Print(variables)
 
 			var output interface{}
 			var err error
