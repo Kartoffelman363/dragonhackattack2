@@ -83,7 +83,7 @@ func StartParsing(workflow models.Workflow) ([]models.Output, error) {
 		initial--
 		current, counter := executeOrder.Dequeue()
 		fmt.Println("eXECUTING BLOCK TYPE", current.Code)
-		if current.Code == "constants" {
+		if current.Code == "const" {
 			for _, value := range current.OutputVariables {
 				data, err := convert(value.Value, value.Type)
 				if err != nil {
@@ -141,11 +141,11 @@ func StartParsing(workflow models.Workflow) ([]models.Output, error) {
 				pointer, err = LLMFormater(variables["input"].Value.(string), variables["language"].Value.(string))
 				output = *pointer
 			case "llm_generate_image":
-				pointer, err = LLMImage(variables["input"].Value.(string))
+				pointer, err = LLMImage(variables["text"].Value.(string))
 				output = *pointer
 				_type = "image"
 			case "llm_generate_image_prompt":
-				pointer, err = LLMImagePrompt(variables["input"].Value.(string))
+				pointer, err = LLMImagePrompt(variables["text"].Value.(string))
 				output = *pointer
 			case "llm_generate_keyword":
 				pointer, err = LLMKeywords(variables["input"].Value.(string))
