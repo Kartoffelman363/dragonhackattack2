@@ -133,7 +133,8 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 				if !ok {
 					contentType = "application/json"
 				}
-				output, err = ApiRequests(variables["url"].(string), variables["body"].(string), requestMethod.(string), contentType.(string))
+				pointer, err = ApiRequests(variables["url"].(string), variables["body"].(string), requestMethod.(string), contentType.(string))
+				output = *pointer
 			case "llm_formater":
 				pointer, err = LLMFormater(variables["input"].(string), variables["example"].(string))
 				output = *pointer

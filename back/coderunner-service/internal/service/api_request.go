@@ -10,7 +10,7 @@ import (
 /*
 Service for sending custom api requests
 */
-func ApiRequests(url string, body string, requestMethod string, contentType string) ([]byte, error) {
+func ApiRequests(url string, body string, requestMethod string, contentType string) (*string, error) {
 	// Creates new request
 	request, err := http.NewRequest(requestMethod, url, bytes.NewBuffer([]byte(body)))
 	if err != nil {
@@ -32,7 +32,8 @@ func ApiRequests(url string, body string, requestMethod string, contentType stri
 		return nil, err
 	}
 
+	strBody := string(responseBody)
 	// Return the response body as a byte slice
-	return responseBody, nil
+	return &strBody, nil
 
 }
