@@ -28,7 +28,7 @@ const cellProps = {
     constValue: ['attrs', 'constValue', 'text']
 };
 
-const MessageInspector = (props: Props): ReactElement => {
+const ConstantInspector = (props: Props): ReactElement => {
     const { cell } = props;
 
     const [label, setLabel] = useState<string>('');
@@ -110,4 +110,4 @@ const MessageInspector = (props: Props): ReactElement => {
     );
 };
 
-export default MessageInspector;
+export default ConstantInspector;
