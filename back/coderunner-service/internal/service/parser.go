@@ -50,7 +50,7 @@ type varMap struct {
 	Value interface{} `json:"value" bson:"value"`
 }
 
-func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
+func StartParsing(workflow models.Workflow) ([]models.Output, error) {
 
 	globals := make(map[string]varMap)
 
@@ -74,7 +74,7 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 		globals[value.Id] = varMap{Type: value.Type, Value: data}
 	}
 
-	returnedOutput := make(map[string]models.Output)
+	var returnedOutput []models.Output
 
 	for executeOrder.Len() > 0 {
 		jsonString, _ := json.Marshal(globals)
@@ -159,7 +159,7 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 			case "output":
 				for key, value := range variables {
 					fmt.Println(key, value)
-					returnedOutput[key] = models.Output{Type: value.Type, Value: value.Value.(string)}
+					returnedOutput = append(returnedOutput, models.Output{Type: value.Type, Value: value.Value.(string)})
 
 				}
 				continue
