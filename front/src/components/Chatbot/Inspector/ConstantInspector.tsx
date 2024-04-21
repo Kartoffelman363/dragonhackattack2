@@ -34,13 +34,13 @@ const ConstantInspector = (props: Props): ReactElement => {
     const [label, setLabel] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [icon, setIcon] = useState<string>('');
-    const [value, setValue] = useState<string>('');
+    const [constant, setConstant] = useState<string>('');
 
     const assignFormFields = useCallback((): void => {
         setLabel(cell.prop(cellProps.label));
         setDescription(cell.prop(cellProps.description));
         setIcon(cell.prop(cellProps.icon));
-        setValue(cell.prop(cellProps.constValue));
+        setConstant(cell.prop(cellProps.constValue));
     }, [cell]);
 
     const changeCellProp = useBaseInspector({ cell, assignFormFields });
@@ -64,7 +64,7 @@ const ConstantInspector = (props: Props): ReactElement => {
                 id="value"
                 type="text"
                 placeholder="Enter const value"
-                value={value}
+                value={constant}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     changeCellProp(cellProps.constValue, e.target.value)
                 }
