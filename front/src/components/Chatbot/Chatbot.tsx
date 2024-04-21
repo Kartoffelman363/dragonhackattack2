@@ -78,36 +78,31 @@ const Chatbot = (): ReactElement => {
 
     const sendJsonToBackend = async (): Promise<void> => {
         console.log('JSON by Balenciaga:\n', jsonForBackend.current);
-        class InputVariable {
+        class Variable {
             VarName: string;
             Id: string;
             Type: string;
             Value: string;
         }
-        class OutputVariable {
-            VarName: string;
-            Id: string;
-            Type: string;
-        }
         class Block {
             Id: string;
-            InputVariables: InputVariable[]; // array of class InputVariable where VarName is same as input parameter of Code: string
+            InputVariables: Variable[]; // array of class InputVariable where VarName is same as input parameter of Code: string
             // and Value is UUID of some OutputVariable
-            OutputVariables: OutputVariable[]; // array of class InputVariable where VarName is
+            OutputVariables: Variable[]; // array of class InputVariable where VarName is
             Code: string; // example:     myFunction(varName1, varName2)
             // Block.Blocks is NO MORE!!!!
             //Blocks: Block[];
         }
         class ResJson {
             Metadata: string;
-            InitialVariables: InputVariable[]; // array of class InputVariable where VarName is UUID and Value is external value defined at start
+            InitialVariables: Variable[]; // array of class InputVariable where VarName is UUID and Value is external value defined at start
             Blocks: Block[]; // array of class Blocks
         }
 
         // Tale JSON ti dobiš
         let resJson: ResJson = {
             Metadata: JSON.stringify(jsonForBackend.current),
-            InitialVariables: [] as InputVariable[], // array of class InputVariable where VarName is UUID and Value is external value defined at start
+            InitialVariables: [] as Variable[], // array of class InputVariable where VarName is UUID and Value is external value defined at start
             Blocks: [] as Block[], // array of class Blocks
         } as ResJson;
 
@@ -122,30 +117,46 @@ const Chatbot = (): ReactElement => {
         });
         console.log('flowchartStart: ', flowchartStart);
         cells.forEach((cell) => {
-            if (cell.type != 'app.Message') return;
             let block: Block = {} as Block;
-            block.Id = cell.id;
-            block.Code = cell.function;
-            block.InputVariables = [] as InputVariable[];
-            block.OutputVariables = [] as OutputVariable[];
-            cell.ports.items.forEach((port: any) => {
-                if (port.group == 'in') {
-                    block.InputVariables.push({
-                        VarName: port.attrs.portLabel.text,
-                        Id: port.id, //Ignore on backend
-                        Type: port.type,
-                        Value: '', //UUID of an OutputVariable ( OutputVariable.VarName )
-                    } as InputVariable);
-                } else if (port.group == 'out') {
-                    block.OutputVariables.push({
-                        VarName: port.id, //UUID
-                        Id: port.id, //Ignore on backend
-                        Type: port.type,
-                    } as OutputVariable);
-                }
-            });
-
-            resJson.Blocks.push(block);
+            block.InputVariables = [] as Variable[];
+            block.OutputVariables = [] as Variable[];
+            switch (cell.type) {
+                case 'app.Message':
+                    block.Id = cell.id;
+                    block.Code = cell.function;
+                    cell.ports.items.forEach((port: any) => {
+                        if (port.group == 'in') {
+                            block.InputVariables.push({
+                                VarName: port.attrs.portLabel.text,
+                                Id: port.id, //Ignore on backend
+                                Type: port.type,
+                                Value: '', //UUID of an OutputVariable ( OutputVariable.VarName )
+                            } as Variable);
+                        } else if (port.group == 'out') {
+                            block.OutputVariables.push({
+                                VarName: port.id, //UUID
+                                Id: port.id, //Ignore on backend
+                                Type: port.type,
+                                Value: '',
+                            } as Variable);
+                        }
+                    });
+                    resJson.Blocks.push(block);
+                    break;
+                case 'app.Constant':
+                    block.Id = cell.id;
+                    block.Code = cell.function;
+                    cell.ports.items.forEach((port: any) => {
+                        block.OutputVariables.push({
+                            VarName: port.id, //UUID
+                            Id: port.id, //Ignore on backend
+                            Type: port.type,
+                            Value: cell.constValue,
+                        } as Variable);
+                    });
+                    resJson.Blocks.push(block);
+                    break;
+            }
         });
 
         cells.forEach((cell) => {
@@ -154,7 +165,7 @@ const Chatbot = (): ReactElement => {
             const target = cell.target.port;
             resJson.Blocks.forEach((_, blockIdx: number) => {
                 resJson.Blocks[blockIdx].InputVariables.forEach(
-                    (inputVar: InputVariable, inputVarIdx: number) => {
+                    (inputVar: Variable, inputVarIdx: number) => {
                         if (inputVar.Id == target) {
                             resJson.Blocks[blockIdx].InputVariables[
                                 inputVarIdx
@@ -165,7 +176,7 @@ const Chatbot = (): ReactElement => {
                                     Id: inputVar.Value,
                                     Type: inputVar.Type,
                                     Value: '',
-                                } as InputVariable);
+                                } as Variable);
                             }
                         }
                     },
