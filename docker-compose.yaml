@@ -15,6 +15,21 @@ services:
       timeout: 30s
       retries: 10
 
+  mongo-express:
+    image: "mongo-express"
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: user
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: adminpass
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
   api-service:
     build:
       context: ./back/api-service
@@ -25,9 +40,9 @@ services:
       mongodb:
         condition: service_healthy
     environment:
-      WORKFLOW_URL: http://workflow-service
-      DOC_URL: http://document-service
-      CODERUNNER_URL: http://coderunner-service
+      WORKFLOW_URL: http://workflow-service:8003
+      DOC_URL: http://document-service:8002
+      CODERUNNER_URL: http://coderunner-service:8001
 
   coderunner-service:
     build:
@@ -40,8 +55,8 @@ services:
         condition: service_healthy
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
-      WORKFLOW_URL: http://workflow-service
-      DOC_URL: http://document-service
+      WORKFLOW_URL: http://workflow-service:8003
+      DOC_URL: http://document-service:8002
 
   document-service:
     build:

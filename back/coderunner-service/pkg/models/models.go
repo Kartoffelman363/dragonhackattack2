@@ -20,10 +20,10 @@ type OutputVariable struct {
 }
 
 type Block struct {
-	ID              primitive.ObjectID `json:"_id" bson:"_id"`
-	InputVariables  []InputVariable    `json:"input_variables" bson:"input_variables"`
-	OutputVariables []OutputVariable   `json:"output_variables" bson:"output_variables"`
-	Code            string             `json:"code" bson:"code"`
+	ID              string           `json:"id" bson:"id"`
+	InputVariables  []InputVariable  `json:"input_variables" bson:"input_variables"`
+	OutputVariables []OutputVariable `json:"output_variables" bson:"output_variables"`
+	Code            string           `json:"code" bson:"code"`
 }
 
 type Workflow struct {

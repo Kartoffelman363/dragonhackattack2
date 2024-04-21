@@ -112,6 +112,12 @@ func StartParsing(workflow models.Workflow) (map[string]interface{}, error) {
 		case "llm_generate_image":
 			output, err = LLMImage(variables["input"].(string))
 
+		case "llm_generate_image_prompt":
+			output, err = LLMImagePrompt(variables["input"].(string))
+
+		case "llm_generate_keyword":
+			output, err = LLMKeywords(variables["input"].(string))
+
 		case "llm_generate":
 			output, err = LLMGenerate(variables["input"].(string))
 

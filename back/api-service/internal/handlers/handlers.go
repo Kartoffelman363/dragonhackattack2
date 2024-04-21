@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -16,257 +17,251 @@ func respondWithError(c *gin.Context, statusCode int, err string) {
 	c.JSON(statusCode, gin.H{"error": err})
 }
 
+func makeHTTPRequest(method, url string, body io.Reader) (*http.Response, error) {
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return nil, err
+	}
+	response, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("server responded with status code: %d", response.StatusCode)
+	}
+	return response, nil
+}
+
 func GetAllDocuments(c *gin.Context) {
 	docUrl := os.Getenv("DOC_URL")
 	if docUrl == "" {
-		respondWithError(c, 500, "internal server error")
+		respondWithError(c, 500, "DOC_URL environment variable is not set")
+		return
 	}
 	url := docUrl + "/documents/"
-	res, err := http.NewRequest("GET", url, nil)
+	response, err := makeHTTPRequest("GET", url, nil)
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-	if res == nil {
-		respondWithError(c, 404, "no documents found")
-		return
-	}
-	defer res.Body.Close()
-	text, err := io.ReadAll(res.Body)
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		respondWithError(c, 500, err.Error())
+		respondWithError(c, 500, "Failed to read response body: "+err.Error())
 		return
 	}
-	body := models.Documents{}
-	err = json.Unmarshal(text, &body)
-	if err != nil {
-		respondWithError(c, 500, err.Error())
+
+	var documents models.Documents
+	if err = json.Unmarshal(body, &documents); err != nil {
+		respondWithError(c, 500, "Failed to unmarshal response: "+err.Error())
 		return
 	}
-	c.JSON(200, body)
+	c.JSON(200, documents)
 }
 
 func GetDocumentByID(c *gin.Context) {
 	docUrl := os.Getenv("DOC_URL")
 	if docUrl == "" {
-		respondWithError(c, 500, "internal server error")
+		respondWithError(c, 500, "DOC_URL environment variable is not set")
+		return
+	}
+	url := docUrl + "/documents/" + c.Param("id")
+	response, err := makeHTTPRequest("GET", url, nil)
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		respondWithError(c, 500, "Failed to read response body: "+err.Error())
 		return
 	}
 
-	url := docUrl + "/documents/" + c.Param("id")
-	res, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		respondWithError(c, 500, err.Error())
+	var document models.Document
+	if err = json.Unmarshal(body, &document); err != nil {
+		respondWithError(c, 500, "Failed to unmarshal response: "+err.Error())
 		return
 	}
-	if res == nil {
-		respondWithError(c, 404, "no documents found")
-		return
-	}
-	defer res.Body.Close()
-	text, err := io.ReadAll(res.Body)
-	if err != nil {
-		respondWithError(c, 500, err.Error())
-		return
-	}
-	body := models.Document{}
-	err = json.Unmarshal(text, &body)
-	if err != nil {
-		respondWithError(c, 500, err.Error())
-		return
-	}
-	c.JSON(200, body)
+	c.JSON(200, document)
 }
 
 func DeleteDocument(c *gin.Context) {
 	docUrl := os.Getenv("DOC_URL")
 	if docUrl == "" {
-		respondWithError(c, 500, "internal server error")
+		respondWithError(c, 500, "DOC_URL environment variable is not set")
 		return
 	}
-
 	url := docUrl + "/documents/" + c.Param("id")
-	_, err := http.NewRequest("DELETE", url, nil)
+	response, err := makeHTTPRequest("DELETE", url, nil)
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-	c.JSON(200, "")
+	response.Body.Close()
+	c.JSON(200, gin.H{"message": "Document deleted successfully"})
 }
 
 func CreateDocument(c *gin.Context) {
 	docUrl := os.Getenv("DOC_URL")
 	if docUrl == "" {
-		respondWithError(c, 500, "internal server error")
+		respondWithError(c, 500, "DOC_URL environment variable is not set")
 		return
 	}
 	url := docUrl + "/documents"
-	res, err := http.NewRequest("POST", url, c.Request.Body)
+	response, err := makeHTTPRequest("POST", url, c.Request.Body)
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-	if res == nil {
-		respondWithError(c, 500, "document creation failed")
-		return
-	}
-	defer res.Body.Close()
-	text, err := io.ReadAll(res.Body)
-	if err != nil {
-		respondWithError(c, 500, err.Error())
-		return
-	}
-	body := models.Document{}
-	err = json.Unmarshal(text, &body)
-	if err != nil {
-		respondWithError(c, 500, err.Error())
-		return
-	}
-	c.JSON(200, body)
-}
+	defer response.Body.Close()
 
-// TOOD: CreateDocument request + struct
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		respondWithError(c, 500, "Failed to read response body: "+err.Error())
+		return
+	}
+
+	var document models.Document
+	if err = json.Unmarshal(body, &document); err != nil {
+		respondWithError(c, 500, "Failed to unmarshal response: "+err.Error())
+		return
+	}
+	c.JSON(200, document)
+}
 
 func GetAllWorkflows(c *gin.Context) {
 	workflowUrl := os.Getenv("WORKFLOW_URL")
 	if workflowUrl == "" {
-		respondWithError(c, 500, "internal server error")
+		respondWithError(c, 500, "WORKFLOW_URL environment variable is not set")
 		return
 	}
 	url := workflowUrl + "/workflows/"
-	res, err := http.NewRequest("GET", url, nil)
+	response, err := makeHTTPRequest("GET", url, nil)
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-	if res == nil {
-		respondWithError(c, 404, "no workflows found")
-		return
-	}
-	defer res.Body.Close()
-	text, err := io.ReadAll(res.Body)
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		respondWithError(c, 500, err.Error())
+		respondWithError(c, 500, "Failed to read response body: "+err.Error())
 		return
 	}
-	body := models.Workflows{}
-	err = json.Unmarshal(text, &body)
-	if err != nil {
-		respondWithError(c, 500, err.Error())
+
+	var workflows models.Workflows
+	if err = json.Unmarshal(body, &workflows); err != nil {
+		respondWithError(c, 500, "Failed to unmarshal response: "+err.Error())
 		return
 	}
-	c.JSON(200, body)
+	c.JSON(200, workflows)
 }
 
 func GetWorkflowByID(c *gin.Context) {
 	workflowUrl := os.Getenv("WORKFLOW_URL")
 	if workflowUrl == "" {
-		respondWithError(c, 500, "internal server error")
+		respondWithError(c, 500, "WORKFLOW_URL environment variable is not set")
+		return
+	}
+	url := workflowUrl + "/workflows/" + c.Param("id")
+	response, err := makeHTTPRequest("GET", url, nil)
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		respondWithError(c, 500, "Failed to read response body: "+err.Error())
 		return
 	}
 
-	url := workflowUrl + "/workflows/" + c.Param("id")
-	res, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		respondWithError(c, 500, err.Error())
+	var workflow models.Workflow
+	if err = json.Unmarshal(body, &workflow); err != nil {
+		respondWithError(c, 500, "Failed to unmarshal response: "+err.Error())
 		return
 	}
-	if res == nil {
-		respondWithError(c, 404, "no workflows found")
-		return
-	}
-	defer res.Body.Close()
-	text, err := io.ReadAll(res.Body)
-	if err != nil {
-		respondWithError(c, 500, err.Error())
-		return
-	}
-	body := models.Workflow{}
-	err = json.Unmarshal(text, &body)
-	if err != nil {
-		respondWithError(c, 500, err.Error())
-		return
-	}
-	c.JSON(200, body)
+	c.JSON(200, workflow)
 }
 
 func DeleteWorkflow(c *gin.Context) {
 	workflowUrl := os.Getenv("WORKFLOW_URL")
 	if workflowUrl == "" {
-		respondWithError(c, 500, "internal server error")
+		respondWithError(c, 500, "WORKFLOW_URL environment variable is not set")
 		return
 	}
-
 	url := workflowUrl + "/workflows/" + c.Param("id")
-	_, err := http.NewRequest("DELETE", url, nil)
+	response, err := makeHTTPRequest("DELETE", url, nil)
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-	c.JSON(200, "")
+	response.Body.Close()
+	c.JSON(200, gin.H{"message": "Workflow deleted successfully"})
 }
 
 func CreateWorkflow(c *gin.Context) {
 	workflowUrl := os.Getenv("WORKFLOW_URL")
 	if workflowUrl == "" {
-		respondWithError(c, 500, "internal server error")
+		respondWithError(c, 500, "WORKFLOW_URL environment variable is not set")
 		return
 	}
 	url := workflowUrl + "/workflows"
-	res, err := http.NewRequest("POST", url, c.Request.Body)
+	response, err := makeHTTPRequest("POST", url, c.Request.Body)
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-	if res == nil {
-		respondWithError(c, 500, "workflow creation failed")
-		return
-	}
-	defer res.Body.Close()
-	text, err := io.ReadAll(res.Body)
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		respondWithError(c, 500, err.Error())
+		respondWithError(c, 500, "Failed to read response body: "+err.Error())
 		return
 	}
-	body := models.Workflow{}
-	err = json.Unmarshal(text, &body)
-	if err != nil {
-		respondWithError(c, 500, err.Error())
+
+	var workflow models.Workflow
+	if err = json.Unmarshal(body, &workflow); err != nil {
+		respondWithError(c, 500, "Failed to unmarshal response: "+err.Error())
 		return
 	}
-	c.JSON(200, body)
+	c.JSON(200, workflow)
 }
 
 func RunWorkflow(c *gin.Context) {
 	workflowUrl := os.Getenv("WORKFLOW_URL")
 	if workflowUrl == "" {
-		respondWithError(c, 500, "internal server error")
+		respondWithError(c, 500, "WORKFLOW_URL environment variable is not set")
 		return
 	}
 
 	url := workflowUrl + "/workflows/" + c.Param("id")
-	res, err := http.NewRequest("GET", url, nil)
+	response, err := makeHTTPRequest("GET", url, nil)
 	if err != nil {
 		respondWithError(c, 500, err.Error())
 		return
 	}
-	if res == nil {
-		respondWithError(c, 404, "workflow doesn't exist")
-		return
-	}
-	defer res.Body.Close()
-	text, err := io.ReadAll(res.Body)
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		respondWithError(c, 500, err.Error())
-		return
-	}
-	coderunnerUrl := os.Getenv("CODERUNNER_URL")
-	url = coderunnerUrl + "/workflows/" + c.Param("id") + "/run"
-	_, err = http.NewRequest("POST", url, bytes.NewBuffer(text))
-	if err != nil {
-		respondWithError(c, 500, err.Error())
+		respondWithError(c, 500, "Failed to read response body: "+err.Error())
 		return
 	}
 
-	c.JSON(200, "")
+	coderunnerUrl := os.Getenv("CODERUNNER_URL")
+	url = coderunnerUrl + "/workflows/" + c.Param("id") + "/run"
+	runResponse, err := makeHTTPRequest("POST", url, bytes.NewBuffer(body))
+	if err != nil {
+		respondWithError(c, 500, err.Error())
+		return
+	}
+	runResponse.Body.Close()
+
+	c.JSON(200, gin.H{"message": "Workflow run successfully"})
 }
