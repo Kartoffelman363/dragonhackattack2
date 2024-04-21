@@ -82,7 +82,8 @@ const Chatbot = (): ReactElement => {
         setJsonEditorOpened(!jsonEditorOpened);
     };
 
-    const sendJsonToBackend = (): void => {
+    const sendJsonToBackend = async (): Promise<void> => {
+        console.log('JSON by Balenciaga:\n', jsonForBackend.current);
         class InputVariable {
             VarName: string;
             Id: string;
@@ -130,25 +131,22 @@ const Chatbot = (): ReactElement => {
             if (cell.type != 'app.Message') return;
             let block: Block = {} as Block;
             block.Id = cell.id;
-            block.Code = cell.attrs.blockFunction.text;
+            block.Code = cell.function;
             block.InputVariables = [] as InputVariable[];
             block.OutputVariables = [] as OutputVariable[];
             cell.ports.items.forEach((port: any) => {
                 if (port.group == 'in') {
                     block.InputVariables.push({
-                        //TODO get proper name not uuid
-                        VarName: port.id,
+                        VarName: port.attrs.portLabel.text,
                         Id: port.id, //Ignore on backend
-                        //TODO add type
-                        Type: '',
+                        Type: port.type,
                         Value: '', //UUID of an OutputVariable ( OutputVariable.VarName )
                     } as InputVariable);
                 } else if (port.group == 'out') {
                     block.OutputVariables.push({
                         VarName: port.id, //UUID
                         Id: port.id, //Ignore on backend
-                        //TODO add type
-                        Type: '',
+                        Type: port.type,
                     } as OutputVariable);
                 }
             });
@@ -168,10 +166,8 @@ const Chatbot = (): ReactElement => {
                                 inputVarIdx
                             ].Value = source;
                             if (flowchartStart.ports.items[0].id == source) {
-                                //TODO set VarName and add extra checks if necessary (prevent duplicates)
                                 resJson.InitialVariables.push({
-                                    //TODO Set a proper VarName
-                                    VarName: inputVar.Value,
+                                    VarName: inputVar.VarName,
                                     Id: inputVar.Value,
                                     Type: inputVar.Type,
                                     Value: '',
@@ -184,15 +180,18 @@ const Chatbot = (): ReactElement => {
             });
         });
 
-        fetch('http://127.0.0.1:8000/workflows', {
-            method: 'POST',
-            body: JSON.stringify(resJson),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        });
-        console.log('JSON by Balenciaga:\n', jsonForBackend.current);
-        console.log('JSON by H&M:\n', resJson);
+        try {
+            await fetch('http://127.0.0.1:8000/workflows', {
+                method: 'POST',
+                body: JSON.stringify(resJson),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
+            });
+        } catch {
+            console.log('Failed to send POST workflows.');
+        }
+        console.log('JSON by H&M:\n', resJson, JSON.stringify(resJson));
     };
 
     const toggleStencil = (): void => {

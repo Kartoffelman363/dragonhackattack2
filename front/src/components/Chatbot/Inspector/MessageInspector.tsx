@@ -78,21 +78,6 @@ const MessageInspector = (props: Props): ReactElement => {
                     changeCellProp(cellProps.icon, e.target.value)
                 }
             />
-            {/*TODO use InputSelect instead*/}
-            {/*
-            <select
-                onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                    changeCellProp(cellProps.blockFunction, e.target.value)
-                }
-                defaultValue={'FunctionNotSet()'}
-            >
-                <option value="FunctionNotSet()">FunctionNotSet()</option>
-                <option value="FunctionSet()">FunctionSet()</option>
-                <option value="SomethingCompletelyDifferent()">
-                    SomethingCompletelyDifferent()
-                </option>
-            </select>
-            */}
         </>
     );
 };
