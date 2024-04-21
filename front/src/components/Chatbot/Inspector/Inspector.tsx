@@ -9,6 +9,7 @@ import LabelInspector from './LabelInspector';
 import eventBusServiceContext from '../../../services/event-bus-service.context';
 import { SharedEvents } from '../../../joint-plus/controller';
 import { ShapeTypesEnum } from '../../../joint-plus/shapes/app.shapes';
+import ConstantInspector from './ConstantInspector';
 
 const Inspector = (): ReactElement => {
     const [cell, setCell] = useState<dia.Cell>(null);
@@ -33,6 +34,8 @@ const Inspector = (): ReactElement => {
         switch (cell.get('type')) {
             case ShapeTypesEnum.MESSAGE:
                 return <MessageInspector cell={cell as shapes.app.Message}/>
+            case ShapeTypesEnum.CONSTANT:
+                return <ConstantInspector cell={cell as shapes.app.Constant}/>
             case ShapeTypesEnum.LINK:
                 return <LinkInspector cell={cell as dia.Link}/>;
             case ShapeTypesEnum.FLOWCHART_START:

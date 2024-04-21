@@ -34,6 +34,94 @@
         },
         {
             "type": "app.Message",
+            "function": "api_request",
+            "size": { "width": 368, "height": 120 },
+            "ports": {
+                "items": [
+                    {
+                        "group": "in",
+                        "type": "string",
+                        "attrs": { "portLabel": { "text": "URL" } },
+                        "id": "9b069715-df25-4bea-b5c2-bc6740265018"
+                    },
+                    {
+                        "group": "in",
+                        "type": "string",
+                        "attrs": { "portLabel": { "text": "Body" } },
+                        "id": "8d9623d1-9fde-43e3-a150-48d9b4bffa8a"
+                    },
+                    {
+                        "group": "out",
+                        "type": "string",
+                        "attrs": { "portLabel": { "text": "Response" } },
+                        "id": "d734f5dc-4945-47c7-8608-10067d18e2d6"
+                    }
+                ]
+            },
+            "markup": [
+                { "tagName": "rect", "selector": "body" },
+                { "tagName": "text", "selector": "label" },
+                { "tagName": "text", "selector": "description" },
+                { "tagName": "image", "selector": "icon" }
+            ],
+            "boundaryPadding": { "horizontal": 16, "top": 32, "bottom": 30 },
+            "position": { "x": -248, "y": -120 },
+            "id": "e85a10e0-84d8-47b0-958e-6c9ee030d8ff",
+            "z": 21,
+            "attrs": {
+                "body": { "stroke": "#E8E8E8" },
+                "label": { "text": "API Request" },
+                "icon": {
+                    "xlinkHref": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iYmxhY2siIHdpZHRoPSIxOHB4IiBoZWlnaHQ9IjE4cHgiPjxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNMjEgMy4wMUgzYy0xLjEgMC0yIC45LTIgMlY5aDJWNC45OWgxOHYxNC4wM0gzVjE1SDF2NC4wMWMwIDEuMS45IDEuOTggMiAxLjk4aDE4YzEuMSAwIDItLjg4IDItMS45OHYtMTRjMC0xLjExLS45LTItMi0yek0xMSAxNmw0LTQtNC00djNIMXYyaDEwdjN6Ii8+PC9zdmc+"
+                }
+            }
+        },
+        {
+            "type": "app.Link",
+            "labels": [
+                {
+                    "attrs": { "labelText": { "text": "Label" } },
+                    "position": { "distance": 0.25 }
+                }
+            ],
+            "source": {
+                "id": "15b1e67d-2d13-4c26-9061-059218126f6c",
+                "magnet": "portBody",
+                "port": "4eb6a098-7345-4e6d-b15f-7a8069339170"
+            },
+            "target": {
+                "id": "e85a10e0-84d8-47b0-958e-6c9ee030d8ff",
+                "magnet": "portBody",
+                "port": "9b069715-df25-4bea-b5c2-bc6740265018"
+            },
+            "id": "1de63be8-32db-430a-8586-734951e76d4d",
+            "z": 22,
+            "attrs": {}
+        },
+        {
+            "type": "app.Link",
+            "labels": [
+                {
+                    "attrs": { "labelText": { "text": "Label" } },
+                    "position": { "distance": 0.25 }
+                }
+            ],
+            "source": {
+                "id": "15b1e67d-2d13-4c26-9061-059218126f6c",
+                "magnet": "portBody",
+                "port": "4eb6a098-7345-4e6d-b15f-7a8069339170"
+            },
+            "target": {
+                "id": "e85a10e0-84d8-47b0-958e-6c9ee030d8ff",
+                "magnet": "portBody",
+                "port": "8d9623d1-9fde-43e3-a150-48d9b4bffa8a"
+            },
+            "id": "009a483b-c4a9-4991-8796-60db18991d9e",
+            "z": 23,
+            "attrs": {}
+        },
+        {
+            "type": "app.Message",
             "function": "llm_generate_image",
             "size": { "width": 368, "height": 120 },
             "ports": {
@@ -79,6 +167,28 @@
                 }
             ],
             "source": {
+                "id": "e85a10e0-84d8-47b0-958e-6c9ee030d8ff",
+                "magnet": "portBody",
+                "port": "d734f5dc-4945-47c7-8608-10067d18e2d6"
+            },
+            "target": {
+                "id": "1e0bcdfa-e56d-4110-83b3-49570577e2cc",
+                "magnet": "portBody",
+                "port": "d84192e1-5142-4205-8819-ab294cd071a7"
+            },
+            "id": "43289831-6cd1-4ea2-9e44-d2e3b603307d",
+            "z": 25,
+            "attrs": {}
+        },
+        {
+            "type": "app.Link",
+            "labels": [
+                {
+                    "attrs": { "labelText": { "text": "Label" } },
+                    "position": { "distance": 0.25 }
+                }
+            ],
+            "source": {
                 "id": "1e0bcdfa-e56d-4110-83b3-49570577e2cc",
                 "magnet": "portBody",
                 "port": "3b881b7f-bc3a-48db-bf9d-c24212c700c2"
@@ -90,88 +200,6 @@
             },
             "id": "b44ec810-faa3-4052-9715-cc27f3228db4",
             "z": 26,
-            "attrs": {}
-        },
-        {
-            "type": "app.Message",
-            "function": "llm_generate_image_prompt",
-            "size": { "width": 368, "height": 120 },
-            "ports": {
-                "items": [
-                    {
-                        "group": "in",
-                        "type": "string",
-                        "attrs": { "portLabel": { "text": "Text" } },
-                        "id": "1ae95cc9-3c16-444c-aaee-4d261fc87912"
-                    },
-                    {
-                        "group": "out",
-                        "type": "string",
-                        "attrs": { "portLabel": { "text": "Response" } },
-                        "id": "245fbd85-61d8-4e1e-a816-29555de3f9a6"
-                    }
-                ]
-            },
-            "markup": [
-                { "tagName": "rect", "selector": "body" },
-                { "tagName": "text", "selector": "label" },
-                { "tagName": "text", "selector": "description" },
-                { "tagName": "image", "selector": "icon" }
-            ],
-            "boundaryPadding": { "horizontal": 16, "top": 32, "bottom": 30 },
-            "position": { "x": -256, "y": -120 },
-            "id": "4171ce46-6be8-475e-b400-347a9a2cbe12",
-            "z": 27,
-            "attrs": {
-                "body": { "stroke": "#E8E8E8" },
-                "label": { "text": "LLM Image Prompt Generate" },
-                "icon": {
-                    "xlinkHref": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iYmxhY2siIHdpZHRoPSIxOHB4IiBoZWlnaHQ9IjE4cHgiPjxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNMjEgMy4wMUgzYy0xLjEgMC0yIC45LTIgMlY5aDJWNC45OWgxOHYxNC4wM0gzVjE1SDF2NC4wMWMwIDEuMS45IDEuOTggMiAxLjk4aDE4YzEuMSAwIDItLjg4IDItMS45OHYtMTRjMC0xLjExLS45LTItMi0yek0xMSAxNmw0LTQtNC00djNIMXYyaDEwdjN6Ii8+PC9zdmc+"
-                }
-            }
-        },
-        {
-            "type": "app.Link",
-            "labels": [
-                {
-                    "attrs": { "labelText": { "text": "Label" } },
-                    "position": { "distance": 0.25 }
-                }
-            ],
-            "source": {
-                "id": "15b1e67d-2d13-4c26-9061-059218126f6c",
-                "magnet": "portBody",
-                "port": "4eb6a098-7345-4e6d-b15f-7a8069339170"
-            },
-            "target": {
-                "id": "4171ce46-6be8-475e-b400-347a9a2cbe12",
-                "magnet": "portBody",
-                "port": "1ae95cc9-3c16-444c-aaee-4d261fc87912"
-            },
-            "id": "9cb37981-208b-496e-8a78-4338c74f096a",
-            "z": 28,
-            "attrs": {}
-        },
-        {
-            "type": "app.Link",
-            "labels": [
-                {
-                    "attrs": { "labelText": { "text": "Label" } },
-                    "position": { "distance": 0.25 }
-                }
-            ],
-            "source": {
-                "id": "4171ce46-6be8-475e-b400-347a9a2cbe12",
-                "magnet": "portBody",
-                "port": "245fbd85-61d8-4e1e-a816-29555de3f9a6"
-            },
-            "target": {
-                "id": "1e0bcdfa-e56d-4110-83b3-49570577e2cc",
-                "magnet": "portBody",
-                "port": "d84192e1-5142-4205-8819-ab294cd071a7"
-            },
-            "id": "2fbcb3c1-597c-4882-9672-340ad95ed616",
-            "z": 29,
             "attrs": {}
         }
     ]
