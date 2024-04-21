@@ -11,7 +11,7 @@
                     }
                 ]
             },
-            "position": { "x": -88, "y": -296 },
+            "position": { "x": 192, "y": -280 },
             "id": "15b1e67d-2d13-4c26-9061-059218126f6c",
             "z": 18,
             "attrs": { "label": { "text": "Start" } }
@@ -93,22 +93,17 @@
             "attrs": {}
         },
         {
-            "type": "app.Message",
-            "function": "llm_generate_image_prompt",
+            "type": "app.Constant",
+            "function": "const",
+            "constValue": "",
             "size": { "width": 368, "height": 120 },
             "ports": {
                 "items": [
                     {
-                        "group": "in",
-                        "type": "string",
-                        "attrs": { "portLabel": { "text": "Text" } },
-                        "id": "1ae95cc9-3c16-444c-aaee-4d261fc87912"
-                    },
-                    {
                         "group": "out",
                         "type": "string",
-                        "attrs": { "portLabel": { "text": "Response" } },
-                        "id": "245fbd85-61d8-4e1e-a816-29555de3f9a6"
+                        "attrs": { "portLabel": { "text": "Constant" } },
+                        "id": "cd01c693-d7bd-465e-b244-281e013b470a"
                     }
                 ]
             },
@@ -119,12 +114,57 @@
                 { "tagName": "image", "selector": "icon" }
             ],
             "boundaryPadding": { "horizontal": 16, "top": 32, "bottom": 30 },
-            "position": { "x": -256, "y": -120 },
-            "id": "4171ce46-6be8-475e-b400-347a9a2cbe12",
-            "z": 27,
+            "position": { "x": -544, "y": -328 },
+            "id": "202b023b-c56d-4446-8c92-403c7e89121a",
+            "z": 30,
             "attrs": {
                 "body": { "stroke": "#E8E8E8" },
-                "label": { "text": "LLM Image Prompt Generate" },
+                "label": { "text": "URL" },
+                "icon": {
+                    "xlinkHref": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iYmxhY2siIHdpZHRoPSIxOHB4IiBoZWlnaHQ9IjE4cHgiPjxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNMjEgMy4wMUgzYy0xLjEgMC0yIC45LTIgMlY5aDJWNC45OWgxOHYxNC4wM0gzVjE1SDF2NC4wMWMwIDEuMS45IDEuOTggMiAxLjk4aDE4YzEuMSAwIDItLjg4IDItMS45OHYtMTRjMC0xLjExLS45LTItMi0yek0xMSAxNmw0LTQtNC00djNIMXYyaDEwdjN6Ii8+PC9zdmc+"
+                },
+                "constValue": { "text": "http://neki.si/krneki" }
+            }
+        },
+        {
+            "type": "app.Message",
+            "function": "api_request",
+            "size": { "width": 368, "height": 120 },
+            "ports": {
+                "items": [
+                    {
+                        "group": "in",
+                        "type": "string",
+                        "attrs": { "portLabel": { "text": "URL" } },
+                        "id": "88945d98-d747-495d-9bae-623b4f6ef9d5"
+                    },
+                    {
+                        "group": "in",
+                        "type": "string",
+                        "attrs": { "portLabel": { "text": "Body" } },
+                        "id": "bdb917eb-a1ee-4c04-bd86-214b49a17457"
+                    },
+                    {
+                        "group": "out",
+                        "type": "string",
+                        "attrs": { "portLabel": { "text": "Response" } },
+                        "id": "5c0aba40-b40f-4b5e-a21d-5a522f6ac9f7"
+                    }
+                ]
+            },
+            "markup": [
+                { "tagName": "rect", "selector": "body" },
+                { "tagName": "text", "selector": "label" },
+                { "tagName": "text", "selector": "description" },
+                { "tagName": "image", "selector": "icon" }
+            ],
+            "boundaryPadding": { "horizontal": 16, "top": 32, "bottom": 30 },
+            "position": { "x": -248, "y": -88 },
+            "id": "d6e7698a-9741-4535-b769-3e13b3ab7d53",
+            "z": 31,
+            "attrs": {
+                "body": { "stroke": "#E8E8E8" },
+                "label": { "text": "API Request" },
                 "icon": {
                     "xlinkHref": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iYmxhY2siIHdpZHRoPSIxOHB4IiBoZWlnaHQ9IjE4cHgiPjxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNMjEgMy4wMUgzYy0xLjEgMC0yIC45LTIgMlY5aDJWNC45OWgxOHYxNC4wM0gzVjE1SDF2NC4wMWMwIDEuMS45IDEuOTggMiAxLjk4aDE4YzEuMSAwIDItLjg4IDItMS45OHYtMTRjMC0xLjExLS45LTItMi0yek0xMSAxNmw0LTQtNC00djNIMXYyaDEwdjN6Ii8+PC9zdmc+"
                 }
@@ -144,12 +184,12 @@
                 "port": "4eb6a098-7345-4e6d-b15f-7a8069339170"
             },
             "target": {
-                "id": "4171ce46-6be8-475e-b400-347a9a2cbe12",
+                "id": "d6e7698a-9741-4535-b769-3e13b3ab7d53",
                 "magnet": "portBody",
-                "port": "1ae95cc9-3c16-444c-aaee-4d261fc87912"
+                "port": "bdb917eb-a1ee-4c04-bd86-214b49a17457"
             },
-            "id": "9cb37981-208b-496e-8a78-4338c74f096a",
-            "z": 28,
+            "id": "3cb172c0-7222-462c-82a3-f807f18cc50b",
+            "z": 32,
             "attrs": {}
         },
         {
@@ -161,17 +201,39 @@
                 }
             ],
             "source": {
-                "id": "4171ce46-6be8-475e-b400-347a9a2cbe12",
+                "id": "202b023b-c56d-4446-8c92-403c7e89121a",
                 "magnet": "portBody",
-                "port": "245fbd85-61d8-4e1e-a816-29555de3f9a6"
+                "port": "cd01c693-d7bd-465e-b244-281e013b470a"
+            },
+            "target": {
+                "id": "d6e7698a-9741-4535-b769-3e13b3ab7d53",
+                "magnet": "portBody",
+                "port": "88945d98-d747-495d-9bae-623b4f6ef9d5"
+            },
+            "id": "da4dc0a6-1549-4acc-a1e7-43421b7c79fa",
+            "z": 33,
+            "attrs": {}
+        },
+        {
+            "type": "app.Link",
+            "labels": [
+                {
+                    "attrs": { "labelText": { "text": "Label" } },
+                    "position": { "distance": 0.25 }
+                }
+            ],
+            "source": {
+                "id": "d6e7698a-9741-4535-b769-3e13b3ab7d53",
+                "magnet": "portBody",
+                "port": "5c0aba40-b40f-4b5e-a21d-5a522f6ac9f7"
             },
             "target": {
                 "id": "1e0bcdfa-e56d-4110-83b3-49570577e2cc",
                 "magnet": "portBody",
                 "port": "d84192e1-5142-4205-8819-ab294cd071a7"
             },
-            "id": "2fbcb3c1-597c-4882-9672-340ad95ed616",
-            "z": 29,
+            "id": "2665f820-9eb9-4f36-8604-ce3a3dc2b36a",
+            "z": 34,
             "attrs": {}
         }
     ]
