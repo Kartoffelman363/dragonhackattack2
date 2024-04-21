@@ -122,6 +122,10 @@ const Chatbot = (): ReactElement => {
         }
 
         const cells: Array<any> = jsonForBackend.current.cells;
+        const flowchartStart: any = cells.find((cell) => {
+            return cell.type == 'app.FlowchartStart';
+        });
+        console.log('flowchartStart: ', flowchartStart);
         cells.forEach((cell) => {
             if (cell.type != 'app.Message') return;
             let block: Block = {} as Block;
@@ -163,6 +167,16 @@ const Chatbot = (): ReactElement => {
                             resJson.Blocks[blockIdx].InputVariables[
                                 inputVarIdx
                             ].Value = source;
+                            if (flowchartStart.ports.items[0].id == source) {
+                                //TODO set VarName and add extra checks if necessary (prevent duplicates)
+                                resJson.InitialVariables.push({
+                                    //TODO Set a proper VarName
+                                    VarName: inputVar.Value,
+                                    Id: inputVar.Value,
+                                    Type: inputVar.Type,
+                                    Value: '',
+                                } as InputVariable);
+                            }
                         }
                     },
                 );
