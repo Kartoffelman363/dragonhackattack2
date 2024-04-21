@@ -1,0 +1,30 @@
+@import "../../../assets/fonts";
+
+.output-inspector {
+    width: 1000px;
+    height: 600px;
+    position: fixed;
+    top: 150px;
+    left: 400px;
+    z-index: 999;
+    background-color: azure;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    
+    .output-inspector-content{
+        float: left;
+        width: 100%;
+    }
+
+    h1{
+        float: left;
+    }
+
+    button{
+        float: right;
+    }
+
+    img{
+        max-width: 100%;
+    }
+}

@@ -22,6 +22,8 @@ import { STENCIL_WIDTH } from '../../theme';
 
 import exampleGraphJSON from '../../joint-plus/config/example-graph.json';
 
+import OutputInspector from './OutputInspector/OutputInspector';
+
 const Chatbot = (): ReactElement => {
     const elementRef = useRef(null);
     const toolbarRef = useRef(null);
@@ -34,6 +36,8 @@ const Chatbot = (): ReactElement => {
     const [stencilOpened, setStencilOpened] = useState(true);
     const [fileJSON, setFileJSON] = useState(null);
     const [subscriptions] = useState(new Subscription());
+    const [outputInspectorIsOpen, setOutputInspectorIsOpen] = useState(false);
+    const [outputContent, setOutputContent] = useState([]);
 
     const openFile = useCallback(
         (json: Object): void => {
@@ -75,6 +79,10 @@ const Chatbot = (): ReactElement => {
             scroller.el.scrollLeft -= STENCIL_WIDTH;
         }
     }, [joint, stencilOpened]);
+
+    const onToggleOutputInspector = () => {
+        setOutputInspectorIsOpen(!outputInspectorIsOpen);
+    };
 
     const sendJsonToBackend = async (): Promise<void> => {
         console.log('JSON by Balenciaga:\n', jsonForBackend.current);
@@ -186,18 +194,55 @@ const Chatbot = (): ReactElement => {
             });
         });
 
-        try {
-            await fetch('http://127.0.0.1:8000/workflows', {
+        console.log('JSON by H&M:\n', resJson, JSON.stringify(resJson));
+
+        const postWorkflow = async (): Promise<string> => {
+            const res = await fetch('http://127.0.0.1:8000/workflows', {
                 method: 'POST',
                 body: JSON.stringify(resJson),
                 headers: {
                     'Content-type': 'application/json; charset=UTF-8',
                 },
             });
+
+            if (!res.ok) {
+                console.log('POST save workflow failed');
+                return;
+            }
+
+            const resBody = await res.json();
+            const workflowId = resBody._id;
+            console.log('POST save workflow recieved workflowId: ', workflowId);
+            return workflowId;
+        };
+
+        const runWorkflow = async (workflowId: string) => {
+            const res = await fetch(
+                'http://127.0.0.1:8000/workflows/' + workflowId + '/run',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json; charset=UTF-8',
+                    },
+                },
+            );
+
+            if (!res.ok) {
+                console.log('POST run workflow failed');
+                return;
+            }
+
+            const resBody = await res.json();
+            console.log('POST run workflow recieved body: ', resBody);
+            setOutputContent(outputContent.concat(resBody));
+        };
+
+        try {
+            const workflowId = await postWorkflow();
+            await runWorkflow(workflowId);
         } catch {
             console.log('Failed to send POST workflows.');
         }
-        console.log('JSON by H&M:\n', resJson, JSON.stringify(resJson));
     };
 
     const toggleStencil = (): void => {
@@ -263,39 +308,57 @@ const Chatbot = (): ReactElement => {
     }, [joint, subscriptions]);
 
     return (
-        <EventBusServiceContext.Provider value={eventBusService}>
-            <div ref={elementRef} className="joint-scope chatbot">
-                <div ref={toolbarRef} />
-                <div className="side-bar">
-                    <div className="toggle-bar">
+        <>
+            <EventBusServiceContext.Provider value={eventBusService}>
+                <div ref={elementRef} className="joint-scope chatbot">
+                    <div ref={toolbarRef} />
+                    <div className="side-bar">
+                        <div className="toggle-bar">
+                            <div
+                                onClick={toggleStencil}
+                                className={
+                                    'icon toggle-stencil ' +
+                                    (!stencilOpened ? 'disabled-icon' : '')
+                                }
+                                data-tooltip="Toggle Element Palette"
+                                data-tooltip-position-selector=".toggle-bar"
+                            />
+                            <div
+                                onClick={sendJsonToBackend}
+                                className="icon toggle-editor "
+                                data-tooltip="Send JSON"
+                                data-tooltip-position-selector=".toggle-bar"
+                            />
+                            <div
+                                onClick={onToggleOutputInspector}
+                                className="icon toggle-editor "
+                                data-tooltip="Toggle Output Inspector"
+                                data-tooltip-position-selector=".toggle-bar"
+                            />
+                        </div>
                         <div
-                            onClick={toggleStencil}
-                            className={
-                                'icon toggle-stencil ' +
-                                (!stencilOpened ? 'disabled-icon' : '')
-                            }
-                            data-tooltip="Toggle Element Palette"
-                            data-tooltip-position-selector=".toggle-bar"
-                        />
-                        <div
-                            onClick={sendJsonToBackend}
-                            className="icon toggle-editor "
-                            data-tooltip="Send JSON"
-                            data-tooltip-position-selector=".toggle-bar"
+                            ref={stencilRef}
+                            style={{
+                                display: stencilOpened ? 'initial' : 'none',
+                            }}
+                            className="stencil-container"
                         />
                     </div>
-                    <div
-                        ref={stencilRef}
-                        style={{ display: stencilOpened ? 'initial' : 'none' }}
-                        className="stencil-container"
-                    />
+                    <div className="main-container">
+                        <div ref={paperRef} className="paper-container" />
+                    </div>
+                    <Inspector />
                 </div>
-                <div className="main-container">
-                    <div ref={paperRef} className="paper-container" />
-                </div>
-                <Inspector />
-            </div>
-        </EventBusServiceContext.Provider>
+            </EventBusServiceContext.Provider>
+            {outputInspectorIsOpen ? (
+                <OutputInspector
+                    closeWindow={onToggleOutputInspector}
+                    content={outputContent}
+                />
+            ) : (
+                <></>
+            )}
+        </>
     );
 };
 
