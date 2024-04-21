@@ -327,7 +327,7 @@ const Message2 = Base.define(ShapeTypesEnum.MESSAGE, {
             }
         },
         items: [
-            { group: 'in', type: 'string', attrs: { portLabel: { text: 'Data To Format' }}},
+            { group: 'in', type: 'string', attrs: { portLabel: { text: 'Input' }}},
             { group: 'in', type: 'string', attrs: { portLabel: { text: 'Example' }}},
             { group: 'out', type: 'string', attrs: { portLabel: { text: 'Response' }}}
         ]
@@ -486,7 +486,7 @@ const Message3 = Base.define(ShapeTypesEnum.MESSAGE, {
             }
         },
         items: [
-            { group: 'in', type: 'string', attrs: { portLabel: { text: 'Data To Format' }}},
+            { group: 'in', type: 'string', attrs: { portLabel: { text: 'Input' }}},
             { group: 'in', type: 'string', attrs: { portLabel: { text: 'Language' }}},
             { group: 'out', type: 'string', attrs: { portLabel: { text: 'Response' }}}
         ]
@@ -645,7 +645,7 @@ const Message4 = Base.define(ShapeTypesEnum.MESSAGE, {
             }
         },
         items: [
-            { group: 'in', type: 'string', attrs: { portLabel: { text: 'Prompt' }}},
+            { group: 'in', type: 'string', attrs: { portLabel: { text: 'Input' }}},
             { group: 'out', type: 'string', attrs: { portLabel: { text: 'Response' }}}
         ]
     },
@@ -803,7 +803,7 @@ const Message5 = Base.define(ShapeTypesEnum.MESSAGE, {
             }
         },
         items: [
-            { group: 'in', type: 'string', attrs: { portLabel: { text: 'Prompt' }}},
+            { group: 'in', type: 'string', attrs: { portLabel: { text: 'Input' }}},
             { group: 'out', type: 'string', attrs: { portLabel: { text: 'Response' }}}
         ]
     },
@@ -961,7 +961,7 @@ const Message6 = Base.define(ShapeTypesEnum.MESSAGE, {
             }
         },
         items: [
-            { group: 'in', type: 'string', attrs: { portLabel: { text: 'Text' }}},
+            { group: 'in', type: 'string', attrs: { portLabel: { text: 'Input' }}},
             { group: 'out', type: 'string', attrs: { portLabel: { text: 'Response' }}}
         ]
     },
@@ -1119,7 +1119,7 @@ const Message7 = Base.define(ShapeTypesEnum.MESSAGE, {
             }
         },
         items: [
-            { group: 'in', type: 'string', attrs: { portLabel: { text: 'Text' }}},
+            { group: 'in', type: 'string', attrs: { portLabel: { text: 'Input' }}},
             { group: 'out', type: 'string', attrs: { portLabel: { text: 'Keywords' }}}
         ]
     },
@@ -1277,7 +1277,7 @@ const Message8 = Base.define(ShapeTypesEnum.MESSAGE, {
             }
         },
         items: [
-            { group: 'in', type: 'string', attrs: { portLabel: { text: 'Document ID' }}},
+            { group: 'in', type: 'string', attrs: { portLabel: { text: 'ID' }}},
             { group: 'out', type: 'string', attrs: { portLabel: { text: 'Document' }}}
         ]
     },
