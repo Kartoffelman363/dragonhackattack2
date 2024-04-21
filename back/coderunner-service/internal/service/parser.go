@@ -45,8 +45,14 @@ func convert(data interface{}, dataType string) (interface{}, error) {
 	}
 }
 
+type varMap struct {
+	Type  string      `json:"type" bson:"type"`
+	Value interface{} `json:"value" bson:"value"`
+}
+
 func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
-	globals := make(map[string]interface{})
+
+	globals := make(map[string]varMap)
 
 	executeOrder := queue.New()
 	executedBlocks := 0
@@ -65,7 +71,7 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 		if err != nil {
 			return nil, err
 		}
-		globals[value.Id] = data
+		globals[value.Id] = varMap{Type: value.Type, Value: data}
 	}
 
 	returnedOutput := make(map[string]models.Output)
@@ -83,11 +89,11 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 				if err != nil {
 					return nil, err
 				}
-				globals[value.Id] = data
+				globals[value.Id] = varMap{Type: value.Type, Value: data}
 			}
 		} else {
 			fmt.Println(executeOrder.String())
-			variables := make(map[string]interface{})
+			variables := make(map[string]varMap)
 			breakage := false
 			for _, variable := range current.InputVariables {
 				fmt.Println(variable.VarName, " ", variable.Value, " ", variable.Id)
@@ -119,52 +125,42 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 			var pointer *string
 			var output interface{}
 			var err error
+			_type := "string"
 			switch current.Code {
 			case "get_document":
-				output, err = internalhandlers.GetDocumentByID(variables["id"].(string))
+				output, err = internalhandlers.GetDocumentByID(variables["id"].Value.(string))
 
 			case "api_request":
 
-				requestMethod, ok := variables["requestmethod"]
-				if !ok {
-					requestMethod = "POST"
-				}
-				contentType, ok := variables["contenttype"]
-				if !ok {
-					contentType = "application/json"
-				}
-				pointer, err = ApiRequests(variables["url"].(string), variables["body"].(string), requestMethod.(string), contentType.(string))
+				pointer, err = ApiRequests(variables["url"].Value.(string), variables["body"].Value.(string), "POST", "application/json")
 				output = *pointer
 			case "llm_formater":
-				pointer, err = LLMFormater(variables["input"].(string), variables["example"].(string))
+				pointer, err = LLMFormater(variables["input"].Value.(string), variables["example"].Value.(string))
 				output = *pointer
 			case "llm_translator":
-				pointer, err = LLMFormater(variables["input"].(string), variables["language"].(string))
+				pointer, err = LLMFormater(variables["input"].Value.(string), variables["language"].Value.(string))
 				output = *pointer
 			case "llm_generate_image":
-				output, err = LLMImage(variables["input"].(string))
-
+				pointer, err = LLMImage(variables["input"].Value.(string))
+				output = *pointer
+				_type = "image"
 			case "llm_generate_image_prompt":
-				pointer, err = LLMImagePrompt(variables["input"].(string))
+				pointer, err = LLMImagePrompt(variables["input"].Value.(string))
 				output = *pointer
 			case "llm_generate_keyword":
-				pointer, err = LLMKeywords(variables["input"].(string))
+				pointer, err = LLMKeywords(variables["input"].Value.(string))
 				output = *pointer
 			case "llm_generate":
-				pointer, err = LLMGenerate(variables["input"].(string))
+				pointer, err = LLMGenerate(variables["input"].Value.(string))
 				output = *pointer
 			case "img_resize":
-				output, err = ResizeImage(variables["inputbytes"].([]byte), variables["width"].(int), variables["height"].(int))
+				output, err = ResizeImage(variables["inputbytes"].Value.([]byte), variables["width"].Value.(int), variables["height"].Value.(int))
 
 			case "output":
 				for key, value := range variables {
 					fmt.Println(key, value)
-					byteValue, ok := value.([]byte)
-					if !ok {
-						returnedOutput[key] = models.Output{Type: "string", Value: value.(string)}
-					} else {
-						returnedOutput[key] = models.Output{Type: "image", Value: string(byteValue)}
-					}
+					returnedOutput[key] = models.Output{Type: value.Type, Value: value.Value.(string)}
+
 				}
 				continue
 			default:
@@ -179,11 +175,11 @@ func StartParsing(workflow models.Workflow) (map[string]models.Output, error) {
 				outputValue := reflect.ValueOf(output)
 				minLen := min(len(current.OutputVariables), outputValue.Len())
 				for i := 0; i < minLen; i++ {
-					globals[current.OutputVariables[i].VarName] = outputValue.Index(i).Interface()
+					globals[current.OutputVariables[i].VarName] = varMap{Type: _type, Value: outputValue.Index(i).Interface()}
 				}
 			} else {
 				value := current.OutputVariables[0]
-				globals[value.VarName] = output
+				globals[value.VarName] = varMap{Type: _type, Value: output}
 			}
 		}
 		executedBlocks++

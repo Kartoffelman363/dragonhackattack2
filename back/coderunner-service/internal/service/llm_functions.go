@@ -3,7 +3,6 @@ package service
 import (
 	openai_client "coderunner-service/internal/openai"
 	"context"
-	"encoding/base64"
 	"fmt"
 
 	openai "github.com/sashabaranov/go-openai"
@@ -69,7 +68,7 @@ func LLMGenerate(input string) (*string, error) {
 	return ChatMessage(input, generatePrompt)
 }
 
-func LLMImage(input string) ([]byte, error) {
+func LLMImage(input string) (*string, error) {
 	request := openai.ImageRequest{
 		Prompt:         input,
 		Size:           openai.CreateImageSize256x256,
@@ -80,12 +79,7 @@ func LLMImage(input string) ([]byte, error) {
 	response, err := openai_client.Client.CreateImage(context.Background(), request)
 	if err != nil {
 		return nil, fmt.Errorf("image creation error: %v", err)
-
 	}
-	imgBytes, err := base64.StdEncoding.DecodeString(response.Data[0].B64JSON)
-	if err != nil {
-		return nil, fmt.Errorf("base64 decode error: %v", err)
 
-	}
-	return imgBytes, nil
+	return &response.Data[0].B64JSON, nil
 }
