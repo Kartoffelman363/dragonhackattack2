@@ -30,9 +30,9 @@ type Workflow struct {
 }
 
 type WorkflowCreate struct {
-	Metadata       string     `json:"metadata" bson:"metadata"`
-	Blocks         []Block    `json:"blocks" bson:"blocks"`
-	InputVariables []Variable `json:"inputvariables" bson:"inputvariables"`
+	Metadata         string     `json:"metadata" bson:"metadata"`
+	Blocks           []Block    `json:"blocks" bson:"blocks"`
+	InitialVariables []Variable `json:"initialvariables" bson:"initialvariables"`
 }
 
 type Document struct {
